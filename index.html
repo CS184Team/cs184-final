@@ -41,8 +41,29 @@
 <div class="container">
 <div class="page-header" id="Introduction">
     <h1>CS184 Final Project Proposal - 
-        <small>Michael Snowden and Brett</small>
+        <small>Michael Snowden, Brett Rapponotti, and Allen Zeng</small>
     </h1>
-    <p></p>
+    <h2>Title, Summary, and Team Members</h2>
+    <h3>Title</h3>
+    <p>
+        The title of our project is <b>Point Cloud to Mesh</b>
+    </p>
+    <h3>Summary</h3>
+    <p>
+        Our project aims to convert point clouds into 3D meshes. Specifically, given an input file of format <code>.plz</code> our program will output a 3D triangle mesh in the format <code>.dae</code>. For our test files, we will be using <a href="http://graphics.stanford.edu/data/3Dscanrep/">the Stanford 3D scanning repository</a>.
+    </p>
+    <h3>Background</h3>
+    <p>
+        The problem we are trying to solve is that, given a set of points (a point cloud), how do we generate a 3D mesh from that pointcloud which connects all of the points.
+
+        Mathematically, we are trying to create a function, which, given a set of points, $P$, such that
+
+        $$P \subset {\rm I\!R}^3$$
+
+        Describe a function $f$, which will convert this point cloud to a mesh.
+
+        
+        $$f : {P | P \subset {\rm I\!R}^3} \rightarrow {M | M \subset }$$
+    </p>
 </div>
 </body>
