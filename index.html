@@ -26,6 +26,8 @@
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 
+    <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/ >
+
     <title>Michael Snowden | CS 184</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <script>
@@ -55,7 +57,7 @@
     <p>
         The problem we are trying to solve is that, given a set of points (a point cloud), how do we generate a 3D mesh from that pointcloud which connects all of the points.
 
-        <img src="images/part1/spheres.png" class="img-responsive center-block">
+        <img src="duck.jpg" class="img-responsive center-block">
     </p>
 
     <p>
@@ -67,7 +69,14 @@
         Describe a function $f$, which will convert this point cloud to a mesh.
 
 
-        $$f : {P | P \subset \{\rm I\!R\}^3} \rightarrow \text{IDK how to describe a mesh or if it's even necessary}$$
+        $$f : \{P | P \subset {\rm I\!R}^3\} \rightarrow 
+        \{M | M \subset 
+            \{
+                \{p_i, p_j, p_k\} 
+                | 
+                p_i, p_j, p_k \subset P, i \ne j \ne k
+            \}^n
+        \}$$
 
         To accomplish this, 
     </p>
