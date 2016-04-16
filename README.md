@@ -9,6 +9,9 @@ $ cmake ..
 $ make
 ```
 
+From here, you will need to download some `.ply` files from [this webpage](http://graphics.stanford.edu/data/3Dscanrep/).
+The files need to be kept outside of source control because they are way too big (>100 MB).
+
 From there, you can run the familiar
 ```
 $ ./meshedit ../dae/cow.dae
