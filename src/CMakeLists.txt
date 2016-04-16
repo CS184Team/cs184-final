@@ -15,6 +15,7 @@ set(COLLADA_VIEWER_SOURCE
         main.cpp
         png.cpp
         rply.c
+        voxel.cpp
         )
 
 # Collada viewer header
