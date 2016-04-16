@@ -8,6 +8,7 @@
 #include <sys/time.h>
 
 namespace CGL {
+
     void MeshEdit::init() {
         smoothShading = false;
         shadingMode = false;

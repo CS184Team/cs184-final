@@ -381,9 +381,6 @@ namespace CGL {
         bool showHUD;
         void drawHUD();
         inline void drawString(float x, float y, string str, size_t size, Color c);
-
-
-
     }; // class MeshEdit
 
 } // namespace CGL

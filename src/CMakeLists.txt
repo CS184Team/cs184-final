@@ -14,6 +14,7 @@ set(COLLADA_VIEWER_SOURCE
         meshEdit.cpp
         main.cpp
         png.cpp
+        rply.c
         )
 
 # Collada viewer header
@@ -31,8 +32,8 @@ set(COLLADA_VIEWER_HEADER
         shaderUtils.h
         mergeVertices.h
         png.h
+        rply.h
         )
-
 
 #-------------------------------------------------------------------------------
 # Set include directories
@@ -60,11 +61,6 @@ link_directories(
 add_executable(meshedit
         ${COLLADA_VIEWER_SOURCE}
         ${COLLADA_VIEWER_HEADER}
-        )
-
-add_executable(ply2xyz
-        rply.c ply2xyz.c
-        rply.h rplyfile.h
         )
 
 add_executable(xyzview
@@ -101,4 +97,4 @@ endif (APPLE)
 set(EXECUTABLE_OUTPUT_PATH ..)
 
 # Install to project root
-install(TARGETS meshedit ply2xyz xyzview DESTINATION ${ColladaViewer_SOURCE_DIR})
+install(TARGETS meshedit xyzview DESTINATION ${ColladaViewer_SOURCE_DIR})

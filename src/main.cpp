@@ -5,7 +5,7 @@
 #include "bezierPatch.h"
 #include "mergeVertices.h"
 #include "shaderUtils.h"
-#include "XYZRenderer.h"
+#include "rply.h"
 
 #include <iostream>
 
@@ -13,6 +13,36 @@ using namespace std;
 using namespace CGL;
 
 #define msg(s) cerr << "[Collada Viewer] " << s << endl;
+#define DEBUG 0
+
+static double *vertices;
+static unsigned int *faces;
+static int vertIdx;
+static int faceIdx;
+
+using namespace std;
+using namespace CGL;
+
+static int vertex_cb(p_ply_argument argument) {
+    long eol;
+    ply_get_argument_user_data(argument, NULL, &eol);
+    double value = ply_get_argument_value(argument);
+    vertices[vertIdx] = value;
+    ++vertIdx;
+    return 1;
+}
+
+static int face_cb(p_ply_argument argument) {
+    long length, value_index;
+    ply_get_argument_property(argument, NULL, &length, &value_index);
+    if (value_index == 0 || value_index == 1 || value_index == 2) {
+        unsigned int idx = (unsigned int) ply_get_argument_value(argument);
+        faces[faceIdx] = idx;
+        ++faceIdx;
+    }
+    return 1;
+}
+
 
 int loadFile(MeshEdit *collada_viewer, const char *path) {
 
@@ -46,37 +76,6 @@ int loadFile(MeshEdit *collada_viewer, const char *path) {
         mesh->type = POLYMESH;
         node.instance = mesh;
         scene->nodes.push_back(node);
-    } else if (path_str.substr(path_str.length() - 4, 4) == ".xyz") {
-//        Camera *cam = new Camera();
-//        cam->type = CAMERA;
-//        Node node;
-//        node.instance = cam;
-//        scene->nodes.push_back(node);
-//        Polymesh *mesh = new Polymesh();
-//
-//        FILE *file = fopen(path, "r");
-//        if (!file) return -1;
-//
-//        char line[256];
-//        long nVertices = -1;
-//        fgets(line, sizeof(line), file);
-//        sscanf(line, "%li", &nVertices);
-//        if (nVertices == -1) return -1;
-//
-//        std::vector<Vector3D> vertices;
-//        vertices.reserve((unsigned long) nVertices);
-//        while (fgets(line, sizeof(line), file)) {
-//            GLfloat x, y, z;
-//            sscanf(line, "%f %f %f", &x, &y, &z);
-//            vertices.push_back(Vector3D(x, y, z));
-//        }
-//        fclose(file);
-//
-//        mesh->vertices = vertices;
-//        mesh->type = POLYMESH;
-//        node.instance = mesh;
-//        scene->nodes.push_back(node);
-        return -1;
     } else {
         return -1;
     }
@@ -93,17 +92,101 @@ int loadFile(MeshEdit *collada_viewer, const char *path) {
 }
 
 int main(int argc, char **argv) {
+    if (argc > 2) {
+        FILE *ofile;
+        char *iname = argv[1];
+        char *oname = argv[2];
+
+        p_ply ply = ply_open(iname, NULL, 0, NULL);
+        if (!ply) {
+            printf("[XYZ] Error: Could not open ifile (%s) for reading. Exiting", iname);
+            return 1;
+        }
+        if (!ply_read_header(ply)) {
+            printf("[XYZ] Error: Could not read ply header from ifile (%s). Exiting", iname);
+            return 1;
+        }
+
+        p_ply_element element = NULL;
+        int verticesFound = 0;
+        while ((element = ply_get_next_element(ply, element))) {
+            p_ply_property property = NULL;
+            long ninstances = 0;
+            const char *element_name;
+            ply_get_element_info(element, &element_name, &ninstances);
+            if (!strcmp(element_name, "vertex")) {
+                verticesFound = 1;
+                break;
+            }
+        }
+        if (!verticesFound) {
+            printf("[XYZ] Error: no vertex found in ply file header! Exiting.");
+            return 1;
+        }
+
+        long nVertices = ply_set_read_cb(ply, "vertex", "x", vertex_cb, NULL, 0);
+        ply_set_read_cb(ply, "vertex", "y", vertex_cb, NULL, 0);
+        ply_set_read_cb(ply, "vertex", "z", vertex_cb, NULL, 1);
+        long nFaces = ply_set_read_cb(ply, "face", "vertex_indices", face_cb, NULL, 0);
+
+        vertices = (double *) malloc(sizeof(double) * nVertices * 3);
+        faces = (unsigned int *) malloc(sizeof(unsigned int) * nFaces * 3);
+
+        if (!ply_read(ply)) return 1;
+        ply_close(ply);
+
+        Polymesh mesh = Polymesh();
+
+        mesh.vertices.reserve((unsigned long) nVertices);
+        for (int i = 0; i < nVertices; ++i) {
+            double *vertex = vertices + i * 3;
+            mesh.vertices.push_back(Vector3D(vertex[0], vertex[1], vertex[2]));
+        }
+        mesh.polygons.reserve((unsigned long) nFaces);
+        for (int i = 0; i < nFaces; ++i) {
+            unsigned int *face = faces + i * 3;
+            Polygon poly = Polygon();
+            poly.vertex_indices.push_back(face[0]);
+            poly.vertex_indices.push_back(face[1]);
+            poly.vertex_indices.push_back(face[2]);
+            mesh.polygons.push_back(poly);
+        }
+
+        ofile = fopen(oname, "w");
+        if (!ofile) {
+            printf("[XYZ] Error: Could not open ofile (%s) for writing. Exiting", oname);
+            return 1;
+        }
+
+        fprintf(ofile, "%li\n", nVertices);
+        MeshNode meshNode(mesh);
+        for (VertexIter vertex = meshNode.mesh.verticesBegin(); vertex != meshNode.mesh.verticesEnd(); ++vertex) {
+            Vector3D position = vertex->position;
+            double x = position[0];
+            double y = position[1];
+            double z = position[2];
+            Vector3D normal = vertex->normal();
+            double nx = normal[0];
+            double ny = normal[1];
+            double nz = normal[2];
+            fprintf(ofile, "%f %f %f %f %f %f\n", x, y, z, nx, ny, nz);
+        }
+        free(vertices);
+        free(faces);
+        vertices = NULL;
+        faces = NULL;
+        fclose(ofile);
+        return 0;
+    }
 
     // create viewer
     Viewer viewer = Viewer();
 
     // create collada_viewer
     MeshEdit *collada_viewer = new MeshEdit();
-//    XYZRenderer* renderer = new XYZRenderer();
 
     // set collada_viewer as renderer
     viewer.set_renderer(collada_viewer);
-//    viewer.set_renderer(renderer);
 
     // init viewer
     viewer.init();
@@ -111,13 +194,10 @@ int main(int argc, char **argv) {
     // load tests
     if (argc == 2) {
         if (loadFile(collada_viewer, argv[1]) < 0) exit(0);
-//
     } else {
         msg("Usage: collada_viewer <path to scene file>");
         exit(0);
     }
-//    renderer->load(argv[1]);
-
     // start viewer
     viewer.start();
 

@@ -131,10 +131,6 @@ namespace CGL {
         }
     }
 
-//    void XYZRenderer::projectOntoSurface(Vector3D touchPoint) {
-//
-//    }
-
     void XYZRenderer::mouseDrag(float x, float y) {
         // Rotate the camera when the left mouse button is dragged.
         float dx = (x - mouse_x);
@@ -286,4 +282,6 @@ namespace CGL {
         view_focus = centroid;
         up = Z_UP;
     }
+
+//    void XYZRender::
 }
