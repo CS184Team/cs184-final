@@ -12,9 +12,10 @@ namespace CGL {
 
     void XYZRenderer::render(void) {
         float *vertex = vertices;
+        double scale = 10.f;
         glBegin(GL_POINTS);
         for (long i = 0; i < nVertices; ++i) {
-            glVertex3d(vertex[0] / 100, vertex[1] / 100.f, vertex[2] / 100.f);
+            glVertex3d(vertex[0] * scale - 0.5f, vertex[1] * scale - 1.5f, vertex[2] * scale + 0.5f);
             vertex += 3;
         }
         glEnd();

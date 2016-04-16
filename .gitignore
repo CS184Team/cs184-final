@@ -1,2 +1,6 @@
 build/
 .idea
+ply/
+xyz/
+*.ply
+*.xyz
