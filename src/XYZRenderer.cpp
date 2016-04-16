@@ -13,9 +13,12 @@ namespace CGL {
     void XYZRenderer::render(void) {
         float *vertex = vertices;
         double scale = 10.f;
+        glPointSize(1.0f);  // default
+        glDisable(GL_DEPTH_TEST);
         glBegin(GL_POINTS);
         for (long i = 0; i < nVertices; ++i) {
-            glVertex3d(vertex[0] * scale - 0.5f, vertex[1] * scale - 1.5f, vertex[2] * scale + 0.5f);
+            // TODO: Remove hard-coded scaling of things
+            glVertex3d(vertex[0] * scale - 0.5f, vertex[1] * scale - 1.5f, vertex[2] * scale - 0.5f);
             vertex += 3;
         }
         glEnd();
