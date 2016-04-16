@@ -47,14 +47,15 @@
         </h1>
         <h3>Title, Summary, and Team Members</h3>
         <p>
-            The title of our project is <b>Point Cloud to Mesh</b>. Our project aims to convert point clouds into 3D
+            The title of our project is <b>Point Cloud to Mesh</b>. The team members are Brett Rapponotti, Michael
+            Snowden, and Allen Zeng. Our project aims to convert point clouds into 3D
             meshes. Specifically, given an input file of format <code>.plz</code> our program will output a 3D triangle
             mesh in the format <code>.dae</code>.
         </p>
         <h3>Background</h3>
         <p>
-            The problem we are trying to solve is that, given a set of points (a point cloud), how do we generate a 3D
-            mesh from that pointcloud which connects all of the points.
+            We will solve the problem of generating a 3D mesh that connects all the points from a given set of points (a
+            pointcloud).
 
             <img src="duck.jpg" class="img-responsive center-block">
 
@@ -79,7 +80,7 @@
             reconstruction algorithms. Our new code is written in c++ and compiled using gcc/g++. If an extensive amount
             of new files are written, the CMake resources will be edited to include compiling the new files. The models
             used to test our mesh reconstruction algorithms are from the Stanford 3D scanning repository. We will also
-            be using <a href="http://w3.impa.br/~diego/software/rply/">RPLy</a>, a small ANSI C library for parsing
+            be using <a href="http://w3.impa.br/~diego/software/rply/">RPly</a>, a small ANSI C library for parsing
             <code>.ply</code> files. This library made it possible for us to create the <code>ply2xyz</code> converter
             necessary in the first week for creating our point cloud rendering program. Without this program, we would
             have to write our own parser for the <code>.ply</code> format, which is decades old and is encoded in
