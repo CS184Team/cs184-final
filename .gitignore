@@ -4,3 +4,5 @@ ply/
 xyz/
 *.ply
 *.xyz
+*.tar
+*.tar.gz
