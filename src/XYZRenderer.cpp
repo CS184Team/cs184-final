@@ -54,12 +54,16 @@ namespace CGL {
         float *vertex = vertices;
         glPointSize(1.0f);  // default
         glDisable(GL_DEPTH_TEST);
-        glBegin(GL_POINTS);
         for (long i = 0; i < nVertices; ++i) {
+            glBegin(GL_POINTS);
             glVertex3d(vertex[0], vertex[1], vertex[2]);
-            vertex += 3;
+            glEnd();
+            glBegin(GL_LINES);
+            glVertex3d(vertex[0], vertex[1], vertex[2]);
+            glVertex3d(vertex[0] + vertex[3], vertex[1] + vertex[4], vertex[2] + vertex[5]);
+            glEnd();
+            vertex += 6;
         }
-        glEnd();
         glFlush();
     }
 
@@ -228,12 +232,12 @@ namespace CGL {
         if (nVertices == -1) return;
 
         free(vertices);
-        vertices = (GLfloat *) malloc(sizeof(GLfloat) * nVertices * 3);
+        vertices = (GLfloat *) malloc(sizeof(GLfloat) * nVertices * 6);
 
         GLfloat *vertex = vertices;
         while (fgets(line, sizeof(line), file)) {
-            sscanf(line, "%f %f %f", vertex, vertex + 1, vertex + 2);
-            vertex += 3;
+            sscanf(line, "%f %f %f %f %f %f", vertex, vertex + 1, vertex + 2, vertex + 3, vertex + 4, vertex + 5);
+            vertex += 6;
         }
         fclose(file);
 
@@ -267,7 +271,7 @@ namespace CGL {
             centroid.x += x;
             centroid.y += y;
             centroid.z += z;
-            vertex += 3;
+            vertex += 6;
         }
         centroid /= (double) nVertices;
 
