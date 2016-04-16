@@ -1,6 +1,8 @@
 #include "CGL/CGL.h"
 #include <vector>
 
+// Allen Zeng. April 16, 2016.
+
 using namespace std;
 
 namespace CGL {
