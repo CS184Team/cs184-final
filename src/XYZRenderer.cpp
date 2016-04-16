@@ -18,7 +18,7 @@ namespace CGL {
         glBegin(GL_POINTS);
         for (long i = 0; i < nVertices; ++i) {
             // TODO: Remove hard-coded scaling of things
-            glVertex3d(vertex[0] * scale - 0.5f, vertex[1] * scale - 1.5f, vertex[2] * scale - 0.5f);
+            glVertex3d(-(vertex[0] * scale - 0.5f), vertex[1] * scale - 1.5f, vertex[2] * scale - 0.5f);
             vertex += 3;
         }
         glEnd();
