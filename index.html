@@ -28,7 +28,7 @@
 
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
 
-    <title>Michael Snowden | CS 184</title>
+    <title>Point Cloud to Mesh Project Proposal | CS 184</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <script>
         MathJax.Hub.Config({
@@ -42,8 +42,8 @@
 <body>
 <div class="container">
     <div class="page-header" id="Introduction">
-        <h1>CS184 Final Project Proposal -
-            <small>Brett Rapponotti, Michael Snowden, and Allen Zeng</small>
+        <h1>Point Cloud to Mesh Project Proposal for CS184 <br>
+            <small> - Brett Rapponotti, Michael Snowden, and Allen Zeng</small>
         </h1>
         <h3>Title, Summary, and Team Members</h3>
         <p>
@@ -69,14 +69,22 @@
             accurate? How are the terms “fast” and “accurate” best defined for this task? We seek to answer these
             questions in our project, and in doing so we hope to construct a point cloud processing method that rivals
             the current standards.
+
+            Our main references for this project are <a
+                href="http://www.research.ibm.com/vistechnology/pdf/bpa_tvcg.pdf">this paper on the ball-pivoting
+            algorithm</a>
+            , and <a href="http://research.microsoft.com/en-us/um/people/hoppe/poissonrecon.pdf">this paper on Poisson
+            surface reconstruction</a>.
         </p>
         <h3>Resources</h3>
         <p>
             For our test files, we will be using <a href="http://graphics.stanford.edu/data/3Dscanrep/">the Stanford 3D
             scanning repository</a>. The project will be implemented on
             OS X. The project will be based on the code provided in CS 184’s Assignment 2. Specifically, we will be
-            using MeshEdit to parse our model files and visually display our meshes in order to check the accuracy of
-            the reconstruction algorithm. Initially, we will be using the HalfEdge data structure to implement our mesh
+            using <code>MeshEdit</code> to parse our model files and visually display our meshes in order to check the
+            accuracy of
+            the reconstruction algorithm. We will be using the <code>HalfEdge</code> data structure to
+            implement our mesh
             reconstruction algorithms. Our new code is written in c++ and compiled using gcc/g++. If an extensive amount
             of new files are written, the CMake resources will be edited to include compiling the new files. The models
             used to test our mesh reconstruction algorithms are from the Stanford 3D scanning repository. We will also
@@ -125,7 +133,8 @@ end_header
         <h3>Goals and deliverables</h3>
         <h4>Plan to deliver</h4>
         <ul>
-            <li>Implementation of “The Ball-Pivoting Algorithm for Surface Reconstruction” algorithm to create a mesh
+            <li>Implementation of <a href="http://www.research.ibm.com/vistechnology/pdf/bpa_tvcg.pdf">“The
+                Ball-Pivoting Algorithm for Surface Reconstruction”</a> algorithm to create a mesh
                 reconstruction from a point cloud, through the use of the HalfEdge data structure
             </li>
             <li>
