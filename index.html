@@ -41,23 +41,126 @@
 </head>
 <body>
 <div class="container">
-<div class="page-header" id="Introduction">
-    <h1>CS184 Final Project Proposal - 
-        <small>Michael Snowden, Brett Rapponotti, and Allen Zeng</small>
-    </h1>
-    <h3>Title, Summary, and Team Members</h3>
-    <p>
-        The title of our project is <b>Point Cloud to Mesh</b>. Our project aims to convert point clouds into 3D meshes. Specifically, given an input file of format <code>.plz</code> our program will output a 3D triangle mesh in the format <code>.dae</code>.
-    </p>
-    <h3>Background</h3>
-    <p>
-        The problem we are trying to solve is that, given a set of points (a point cloud), how do we generate a 3D mesh from that pointcloud which connects all of the points.
+    <div class="page-header" id="Introduction">
+        <h1>CS184 Final Project Proposal -
+            <small>Michael Snowden, Brett Rapponotti, and Allen Zeng</small>
+        </h1>
+        <h3>Title, Summary, and Team Members</h3>
+        <p>
+            The title of our project is <b>Point Cloud to Mesh</b>. Our project aims to convert point clouds into 3D
+            meshes. Specifically, given an input file of format <code>.plz</code> our program will output a 3D triangle
+            mesh in the format <code>.dae</code>.
+        </p>
+        <h3>Background</h3>
+        <p>
+            The problem we are trying to solve is that, given a set of points (a point cloud), how do we generate a 3D
+            mesh from that pointcloud which connects all of the points.
 
-        <img src="duck.jpg" class="img-responsive center-block">
-    </p>
+            <img src="duck.jpg" class="img-responsive center-block">
 
-    <p>
-        asdf
-    </p>
+            The purpose of a 3D scanner is to analyze a real-world object and collect data on the object’s shape and
+            appearance. The data collected by a 3D scanner is used to construct virtual models for various purposes,
+            including but not limited to industrial design, medical prosthetics, engineering prototyping, quality
+            control, entertainment production, and historic artifact documentation. These devices commonly scan the
+            surface of the object and output data in the form of point clouds. Then the point clouds must be processed
+            to created a 3D virtual mesh. The creation of the mesh is a challenging task. There are many ways to connect
+            the points within the point cloud to create a mesh: which method is the fastes? Which method is the most
+            accurate? How are the terms “fast” and “accurate” best defined for this task? We seek to answer these
+            questions in our project, and in doing so we hope to construct a point cloud processing method that rivals
+            the current standards.
+        </p>
+        <h3>Resources</h3>
+        <p>
+            For our test files, we will be using <a href="http://graphics.stanford.edu/data/3Dscanrep/">the Stanford 3D
+            scanning repository</a>. The project will be implemented on
+            OS X. The project will be based on the code provided in CS 184’s Assignment 2. Specifically, we will be
+            using MeshEdit to parse our model files and visually display our meshes in order to check the accuracy of
+            the reconstruction algorithm. Initially, we will be using the HalfEdge data structure to implement our mesh
+            reconstruction algorithms. Our new code is written in c++ and compiled using gcc/g++. If an extensive amount
+            of new files are written, the CMake resources will be edited to include compiling the new files. The models
+            used to test our mesh reconstruction algorithms are from the Stanford 3D scanning repository. We will also
+            be using <a href="http://w3.impa.br/~diego/software/rply/">RPLy</a>, a small ANSI C library for parsing
+            <code>.ply</code> files. This library made it possible for us to create the <code>ply2xyz</code> converter
+            necessary in the first week for creating our point cloud rendering program. Without this program, we would
+            have to write our own parser for the <code>.ply</code> format, which is decades old and is encoded in
+            several different formats, including binary. By converting to <code>.xyz</code> format (a format which
+            Michael made up for this project), we were able to view our files in a format that was easier to parse.
+        </p>
+        <div class="row">
+            <div class="col-sm-6">
+                Below are the first few lines of an example <code>.ply</code> file. Notice how the vertex data is
+                encoded in a
+                non-ASCII format, making it hard to parse. In addition, there is an unnecessary header, and data about
+                vertex indices and faces.
+                 <pre>ply
+format binary_big_endian 1.0
+element vertex 3609600
+property float x
+property float y
+property float z
+element face 7219045
+property list uchar int vertex_indices
+end_header
+Á£â‘ÁKf?Þ‹‹Á£$éÁKå?ß^íÁ£uSÁJ.?çåÝÁ¤IøÁI“é?å_ÌÁ¤C×ÁL‰g?ÕñÁ£§EÁMBD?Õ(ƒÁ¤¬æÁK?Ûd¦Á¢¦‘ÁJ‡~?é°Á£éÁM·H?ÔøVÁ¢m±ÁLJ]
+...</pre>
+            </div>
+            <div class="col-sm-6">
+                Below are the first few lines of the above file converted to <code>.xyz</code> format. Notice how the
+                first line tells us the number of vertices, and the lines below it just tell us the data for each
+                vertex.
+                <pre>3609600
+-20.4856 -12.7125 1.73863
+-20.393 -12.7436 1.74508
+-20.4323 -12.629 1.8117
+-20.5361 -12.5986 1.79199
+-20.5331 -12.7835 1.67143
+-20.4567 -12.8287 1.6653
+-20.5844 -12.6895 1.71401
+-20.3313 -12.6581 1.82079
+-20.3779 -12.8572 1.66383
+...</pre>
+            </div>
+        </div>
+        <h3>Goals and deliverables</h3>
+        <h4>Plan to deliver</h4>
+        <ul>
+            <li>Implementation of “The Ball-Pivoting Algorithm for Surface Reconstruction” algorithm to create a mesh
+                reconstruction from a point cloud, through the use of the HalfEdge data structure
+            </li>
+            <li>
+                Timing and accuracy comparison graphs between the two algorithms. Timing can be implemented easily in
+                the code, but we will use a visual comparison of accuracy between the two meshes.
+            </li>
+        </ul>
+        <h4>Hope to deliver</h4>
+        <ul>
+            <li>
+                Implementation of the more advanced “Poisson Surface Reconstruction” algorithm to create a mesh
+                reconstruction from a point cloud.
+            </li>
+        </ul>
+        <h3>Schedule</h3>
+        <ul>
+            <li>
+                <b>First week</b> (week of 4/11)
+                <br>
+                Finish up proposal. Program to render point clouds.
+            </li>
+            <li>
+                <b>Second week</b> (week of 4/18)
+                <ul>
+                    <li>Implement basic BPA (working version, that may or may not be optimized for faster rendering)
+                    </li>
+                    <li>Tests for performance and accuracy for our algorithm</li>
+                </ul>
+            </li>
+            <li>
+                <b>Third week</b> (week of (4/25)
+                <br>
+                Implementing a basic Poisson Surface Reconstruction algorithm as based on the linked article, optimizing
+                the BPA algorithm and then running both to compare their efficiencies and speeds.
+            </li>
+        </ul>
+    </div>
 </div>
 </body>
