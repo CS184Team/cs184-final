@@ -154,7 +154,68 @@ end_header
         <ul>
             <li>
                 Implementation of the more advanced “Poisson Surface Reconstruction” algorithm to create a mesh
-                reconstruction from a point cloud.
+                reconstruction from a point cloud. After completing the performance analysis algorithm for the
+                ball-pivoting algorithm, we will
+                answer these questions:
+                <ul>
+                    <li>Is the BPA or
+                        Poisson better for constructing a mesh from a point cloud?
+                    </li>
+                    <li>
+                        Is there a tradeoff between speed and
+                        accuracy for the algorithms?
+                    </li>
+                </ul>
+                We will structure our answers as follows:
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Mesh</th>
+                        <th>Halt time for BPA</th>
+                        <th>Accuracy for BPA</th>
+                        <th>Halt time for PSR</th>
+                        <th>Accuracy for PSR</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>$t_{1,BPA}$</td>
+                        <td>$a_{1,BPA}$</td>
+                        <td>$t_{1,PSR}$</td>
+                        <td>$a_{1,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>$t_{2,BPA}$</td>
+                        <td>$a_{2,BPA}$</td>
+                        <td>$t_{2,PSR}$</td>
+                        <td>$a_{2,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>$t_{3,BPA}$</td>
+                        <td>$a_{3,BPA}$</td>
+                        <td>$t_{3,PSR}$</td>
+                        <td>$a_{3,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>$t_{4,BPA}$</td>
+                        <td>$a_{4,BPA}$</td>
+                        <td>$t_{4,PSR}$</td>
+                        <td>$a_{4,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>$t_{5,BPA}$</td>
+                        <td>$a_{5,BPA}$</td>
+                        <td>$t_{5,PSR}$</td>
+                        <td>$a_{5,PSR}$</td>
+                    </tr>
+                    </tbody>
+                </table>
+                Here, BPA stands for "Ball-Pivoting Algorithm", and PSR stands for "Poisson Surface Reconstruction".
             </li>
         </ul>
         <h3>Schedule</h3>
@@ -162,7 +223,7 @@ end_header
             <li>
                 <b>First week</b> (week of 4/11)
                 <br>
-                Finish up proposal. Program to render point clouds.
+                Finish up proposal. Program to render point clouds. This is now done. Here is a
             </li>
             <li>
                 <b>Second week</b> (week of 4/18)
