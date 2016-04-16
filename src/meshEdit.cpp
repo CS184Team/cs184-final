@@ -164,17 +164,17 @@ namespace CGL {
 
         // Create the good old camera aligned coordinate system.
         gluLookAt(cx, cy, cz, // camera location.
-                v_x, v_y, v_z, // point looking at.
-                up_x, up_y, up_z); // up direction.
+                  v_x, v_y, v_z, // point looking at.
+                  up_x, up_y, up_z); // up direction.
 
         float eyePos[] = {cx, cy, cz};
 
         glUseProgram(shaderProgID);
         glUniform3fv(glGetUniformLocation(shaderProgID, "eyePos"),
-                1, eyePos);
+                     1, eyePos);
         glUniform1i(glGetUniformLocation(shaderProgID, "envmap"), 1);
         time_t t = time(0);
-        struct tm * now = localtime( & t );
+        struct tm *now = localtime(&t);
         struct timeval tp;
         gettimeofday(&tp, NULL);
         int ms = (int) ((tp.tv_sec * 1000 + tp.tv_usec / 1000) % 1000);
@@ -205,9 +205,9 @@ namespace CGL {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluPerspective(vfov, // Field of view in DEGREES.
-                1.0 * screen_w / screen_h, // Aspect Ratio.
-                nearClip, // distance near side of the view frustrum.
-                farClip); // far side of the view frustrum.
+                       1.0 * screen_w / screen_h, // Aspect Ratio.
+                       nearClip, // distance near side of the view frustrum.
+                       farClip); // far side of the view frustrum.
     }
 
     string MeshEdit::name() {
@@ -225,7 +225,7 @@ namespace CGL {
         }
         switch (key) {
 
-                // reset view transformation
+            // reset view transformation
             case ' ':
                 reset_camera();
                 break;
@@ -263,27 +263,27 @@ namespace CGL {
             case 'Q':
                 smoothShading = !smoothShading;
                 break;
-			case 'r':
-			case 'R':
-				glDeleteProgram(shaderProgID);
-				shaderProgID = loadShaders("shader/vert", "shader/frag");
-				if (!shaderProgID)
-				    shaderProgID = loadShaders("../shader/vert", "../shader/frag");
-				break;
+            case 'r':
+            case 'R':
+                glDeleteProgram(shaderProgID);
+                shaderProgID = loadShaders("shader/vert", "shader/frag");
+                if (!shaderProgID)
+                    shaderProgID = loadShaders("../shader/vert", "../shader/frag");
+                break;
             default:
                 break;
         }
     }
 
     void MeshEdit::selectNextHalfedge(void) {
-        Halfedge* h = selectedFeature.element->getHalfedge();
+        Halfedge *h = selectedFeature.element->getHalfedge();
         if (h != NULL) {
             selectedFeature.element = elementAddress(h->next());
         }
     }
 
     void MeshEdit::selectTwinHalfedge(void) {
-        Halfedge* h = selectedFeature.element->getHalfedge();
+        Halfedge *h = selectedFeature.element->getHalfedge();
         if (h != NULL) {
             selectedFeature.element = elementAddress(h->twin());
         }
@@ -324,16 +324,15 @@ namespace CGL {
 
         // Ensure appropiate bounds amounts.
         view_distance = bound(view_distance,
-                min_view_distance,
-                max_view_distance);
+                              min_view_distance,
+                              max_view_distance);
 
         return;
     }
 
     void MeshEdit::mouse_button_event(int button, int event) {
         switch (event) {
-            case MOUSE_BUTTON_RELEASE:
-            {
+            case MOUSE_BUTTON_RELEASE: {
                 switch (button) {
                     case MOUSE_BUTTON_LEFT:
                         mouseR(LEFT);
@@ -350,8 +349,7 @@ namespace CGL {
                 }
                 break;
             }
-            case MOUSE_BUTTON_PRESS:
-            {
+            case MOUSE_BUTTON_PRESS: {
                 switch (button) {
                     case MOUSE_BUTTON_LEFT:
                         left_down = true;
@@ -371,7 +369,7 @@ namespace CGL {
         }
     }
 
-    void MeshEdit::load(Scene* scene) {
+    void MeshEdit::load(Scene *scene) {
         cout << "MeshEdit: loading scene:\n";
 
         this->scene = scene;
@@ -379,33 +377,33 @@ namespace CGL {
         // Start out with 0 lights.
         this->light_num = 0;
 
-        std::vector<Node>& nodes = scene->nodes;
+        std::vector<Node> &nodes = scene->nodes;
 
         // Iterate through the nodes and initialize the relevant
         // opengl properties.
 
         int len = nodes.size();
         for (int i = 0; i < len; i++) {
-            Node & node = nodes[i];
+            Node &node = nodes[i];
 
-            Instance * instance = node.instance;
+            Instance *instance = node.instance;
 
             if (!instance)
                 continue;
 
             // FIXME : Transform Matrix?
-            switch (instance -> type) {
+            switch (instance->type) {
                 case CAMERA:
-                    init_camera(static_cast<Camera&> (*instance));
+                    init_camera(static_cast<Camera &> (*instance));
                     break;
                 case LIGHT:
-                    init_light(static_cast<Light&> (*instance));
+                    init_light(static_cast<Light &> (*instance));
                     break;
                 case POLYMESH:
-                    init_polymesh(static_cast<Polymesh&> (*instance));
+                    init_polymesh(static_cast<Polymesh &> (*instance));
                     break;
                 case MATERIAL:
-                    init_material(static_cast<Material&> (*instance));
+                    init_material(static_cast<Material &> (*instance));
                     break;
             }
 
@@ -414,7 +412,7 @@ namespace CGL {
         cerr << "Done loading scene. Mesh Ready for Editing!" << endl;
     }
 
-    void MeshEdit::init_camera(Camera& camera) {
+    void MeshEdit::init_camera(Camera &camera) {
         hfov = camera.hfov;
         vfov = camera.vfov;
         nearClip = camera.nclip;
@@ -426,9 +424,9 @@ namespace CGL {
         camera_angles = Vector3D(0., 0., 0.);
     }
 
-    void MeshEdit::init_light(Light& light) {
+    void MeshEdit::init_light(Light &light) {
 
-        Color & c = light.color;
+        Color &c = light.color;
 
         // FIXME : 0 - 1.0 or (-1 - 1.0?)
         GLfloat irradiance[] = {c.r, c.g, c.b, c.a};
@@ -439,14 +437,12 @@ namespace CGL {
 
         /* Enable a single OpenGL light. */
         switch (light.light_type) {
-            case AMBIENT:
-            {
+            case AMBIENT: {
                 glLightfv(LIGHT_INDEX, GL_AMBIENT, irradiance);
             }
                 break;
 
-            case POINT:
-            {
+            case POINT: {
                 glLightfv(LIGHT_INDEX, GL_DIFFUSE, irradiance);
                 // FIXME : Replace default position.
                 const GLfloat arg1[] = {0.0, 0.0, 0.0, 1.0};
@@ -454,8 +450,7 @@ namespace CGL {
             }
                 break;
 
-            case DIRECTIONAL:
-            {
+            case DIRECTIONAL: {
                 glLightfv(LIGHT_INDEX, GL_DIFFUSE, irradiance);
                 // w = 0.0 --> Infinitly far away.
                 const GLfloat arg2[] = {1.0, 1.0, 1.0, 0.0};
@@ -475,7 +470,7 @@ namespace CGL {
 
     }
 
-    void MeshEdit::init_polymesh(Polymesh& polymesh) {
+    void MeshEdit::init_polymesh(Polymesh &polymesh) {
         // Create and store a mesh node object.
         MeshNode meshNode(polymesh);
         meshNodes.push_back(meshNode);
@@ -493,7 +488,7 @@ namespace CGL {
 
         // Determine how far away the camera should be.
         // Minimum distance guaranteed to not clip into the model in C - V.
-        canonical_view_distance = (high - low).norm()*1.01; // norm is magnitude.
+        canonical_view_distance = (high - low).norm() * 1.01; // norm is magnitude.
         min_view_distance = canonical_view_distance / 10.0;
         view_distance = canonical_view_distance * 2.;
         max_view_distance = canonical_view_distance * 20.;
@@ -503,7 +498,7 @@ namespace CGL {
         up = Z_UP;
     }
 
-    void MeshEdit::init_material(Material& material) {
+    void MeshEdit::init_material(Material &material) {
 
         // FIXME : Support Materials.
         return;
@@ -547,7 +542,7 @@ namespace CGL {
         float dx = (x - mouse_x);
         float dy = (y - mouse_y);
 
-        Vertex* v = selectedFeature.element -> getVertex();
+        Vertex *v = selectedFeature.element->getVertex();
         if (!mouse_rotate && v != NULL) {
             dragPosition(dx, dy, v->position);
             return;
@@ -555,8 +550,8 @@ namespace CGL {
 
 
         if (mouse_rotate) {
-            double & cx = camera_angles.x;
-            double & cy = camera_angles.y;
+            double &cx = camera_angles.x;
+            double &cy = camera_angles.y;
 
             cx += dx * 2 * PI / screen_w;
             cy += dy * PI / screen_h;
@@ -582,7 +577,7 @@ namespace CGL {
 
     // FIXME : Replace with standard Vector4D library call.
 
-    inline Vector2D to2DVector(Vector4D & V) {
+    inline Vector2D to2DVector(Vector4D &V) {
         return Vector2D(V.x, V.y);
     }
 
@@ -590,7 +585,7 @@ namespace CGL {
     // Stores barycentric coordinates in A if return is true.
 
     inline bool point_in_triangle_and_barycentric_coordinates(
-            Vector2D & A, Vector2D & B, Vector2D & C, Vector2D point) {
+            Vector2D &A, Vector2D &B, Vector2D &C, Vector2D point) {
 
         // Compute vectors
         Vector2D v0 = C - A;
@@ -620,7 +615,7 @@ namespace CGL {
         return output;
     }
 
-    inline Vector2D MeshEdit::unitCubeToScreenSpace(Vector4D & in) {
+    inline Vector2D MeshEdit::unitCubeToScreenSpace(Vector4D &in) {
         return Vector2D(screen_w * (in.x + 1) / 2, screen_h * (in.y + 1) / 2);
     }
 
@@ -640,10 +635,10 @@ namespace CGL {
     //
 
     inline bool MeshEdit::triangleSelectionTest(
-            const Vector2D & selectionPoint,
-            Vector4D & A, Vector4D & B, Vector4D & C,
-            float & w,
-            Vector3D& barycentricCoordinates) {
+            const Vector2D &selectionPoint,
+            Vector4D &A, Vector4D &B, Vector4D &C,
+            float &w,
+            Vector3D &barycentricCoordinates) {
         /*
          * Algorithm for computing from model space coordinates X to
          * screen space with a depth value using opengl.
@@ -695,15 +690,15 @@ namespace CGL {
 
         for (int r = 0; r < 4; r++)
             for (int c = 0; c < 4; c++) {
-                P(r, c) = projMatrix [4 * c + r];
+                P(r, c) = projMatrix[4 * c + r];
                 M(r, c) = modelMatrix[4 * c + r];
             }
 
         // -- Step 3 & 4. Apply Model transform, then Projection transform.
 
-        A = P * M*A;
-        B = P * M*B;
-        C = P * M*C;
+        A = P * M * A;
+        B = P * M * B;
+        C = P * M * C;
 
         // -- Step 5. Projection divide.
         A /= A.w;
@@ -742,7 +737,7 @@ namespace CGL {
             /* Interpolate Along the linear plane in the plane aligned
              * coordinate system.
              */
-            float w_new = A.w + dwu * bary_u + dwv*bary_v;
+            float w_new = A.w + dwu * bary_u + dwv * bary_v;
 
 
             /* Determine whether this triangle is closer to the viewer within
@@ -782,7 +777,7 @@ namespace CGL {
 
         MeshFeature closestFeature;
         MeshFeature currentFeature;
-        MeshNode* closestNode;
+        MeshNode *closestNode;
 
         Vector4D A, B, C;
         Vector3D barycentric_min;
@@ -799,7 +794,7 @@ namespace CGL {
         // Iterate through all meshes.
         int num_meshes = meshNodes.size();
         for (int mesh_index = 0; mesh_index < num_meshes; mesh_index++) {
-            MeshNode& node = meshNodes[mesh_index];
+            MeshNode &node = meshNodes[mesh_index];
 
             // Iterate through all triangles.
             for (FaceIter f = node.mesh.facesBegin(); f != node.mesh.facesEnd(); f++) {
@@ -851,7 +846,7 @@ namespace CGL {
     // Transforms the position vector in world space according to an offset in screenspace.
 
     void MeshEdit::dragPosition(float screen_x_offset, float screen_y_offset,
-            Vector3D & position) {
+                                Vector3D &position) {
 
         GLdouble projMatrix[16];
         GLdouble modelMatrix[16];
@@ -870,7 +865,7 @@ namespace CGL {
 
         for (int r = 0; r < 4; r++)
             for (int c = 0; c < 4; c++) {
-                P(r, c) = projMatrix [4 * c + r];
+                P(r, c) = projMatrix[4 * c + r];
                 M(r, c) = modelMatrix[4 * c + r];
             }
 
@@ -878,7 +873,7 @@ namespace CGL {
         pos.w = 1.0;
 
         // Project into 3d Homogeneous coordinates.
-        pos = P * M*pos;
+        pos = P * M * pos;
 
         // -- Step 5. Projection divide into unit cube.
         pos /= pos.w;
@@ -886,7 +881,7 @@ namespace CGL {
 
         // Compute the offset vector in normalized screen space coordinates.
         Vector4D screen_offset(screen_x_offset * 2 / screen_w,
-                -screen_y_offset * 2 / screen_h, 0.0, 0.0);
+                               -screen_y_offset * 2 / screen_h, 0.0, 0.0);
 
         pos += screen_offset;
 
@@ -904,7 +899,7 @@ namespace CGL {
     // -- Geometric Operations
 
     void MeshEdit::mesh_up_sample() {
-        HalfedgeMesh* mesh;
+        HalfedgeMesh *mesh;
 
         // If an element is selected, resample the mesh containing that
         // element; otherwise, resample the first mesh in the scene.
@@ -924,7 +919,7 @@ namespace CGL {
 
     inline void MeshEdit::drawString(float x, float y, string str, size_t size, Color c) {
         int line_index = text_mgr.add_line((x * 2 / screen_w) - 1.0,
-                (-y * 2 / screen_h) + 1.0, str, size, c);
+                                           (-y * 2 / screen_h) + 1.0, str, size, c);
         messages.push_back(line_index);
     }
 
@@ -963,14 +958,14 @@ namespace CGL {
 
         }
 
-        Vertex* v = selectedFeature.element->getVertex();
+        Vertex *v = selectedFeature.element->getVertex();
         if (v != NULL) {
             ostringstream m1, m2, m3, m4, m5, m6, m7, m8, m9;
             m1 << "VERTEX DATA";
             m2 << "address      = " << v;
 
             // -- Nicely format position data.
-            Vector3D & pos = v->position;
+            Vector3D &pos = v->position;
             m3 << "position:  x = ";
 
             // -- X.
@@ -989,8 +984,8 @@ namespace CGL {
             m5 << "           z = " << pos.z;
 
 
-            m6 << "halfedge()   = " << elementAddress(v -> halfedge());
-            m7 << "isBoundary() = " << v -> isBoundary();
+            m6 << "halfedge()   = " << elementAddress(v->halfedge());
+            m7 << "isBoundary() = " << v->isBoundary();
             m8 << "degree()     = " << v->degree();
             m9 << "isNew        = " << v->isNew;
 
@@ -1015,7 +1010,7 @@ namespace CGL {
             drawString(x0, y, m9.str(), size, text_color);
         }
 
-        Halfedge* h = selectedFeature.element->getHalfedge();
+        Halfedge *h = selectedFeature.element->getHalfedge();
         if (h != NULL) {
 
             ostringstream m1, m2, m3, m4, m5, m6, m7, m8;
@@ -1050,15 +1045,15 @@ namespace CGL {
 
         }
 
-        Edge* e = selectedFeature.element->getEdge();
+        Edge *e = selectedFeature.element->getEdge();
         if (e != NULL) {
             ostringstream m1, m2, m3, m4, m5;
 
             m1 << "EDGE DATA";
             m2 << "address      = " << e;
             m3 << "halfedge()   = " << elementAddress(e->halfedge());
-            m4 << "isBoundary() = " << e -> isBoundary() << endl;
-            m5 << "isNew        = " << e -> isNew << endl;
+            m4 << "isBoundary() = " << e->isBoundary() << endl;
+            m5 << "isNew        = " << e->isNew << endl;
 
             drawString(x0, y, m1.str(), size, text_color);
             y += inc;
@@ -1074,7 +1069,7 @@ namespace CGL {
         }
 
 
-        Face* f = selectedFeature.element->getFace();
+        Face *f = selectedFeature.element->getFace();
         if (f != NULL) {
             ostringstream m1, m2, m3, m4, m5; //, m6, m7, m8;
 
@@ -1159,12 +1154,12 @@ namespace CGL {
     // ----------------------- Mesh Node functions. --------------------------/
     //  **********************************************************************/
 
-    inline void setColor(Color & c) {
+    inline void setColor(Color &c) {
         // FIXME? : Incorporate antialiasing.
         glColor3f(c.r, c.g, c.b);
     }
 
-    void MeshEdit::renderMesh(HalfedgeMesh& mesh) {
+    void MeshEdit::renderMesh(HalfedgeMesh &mesh) {
         if (shadingMode)
             glUseProgram(shaderProgID);
         else
@@ -1186,11 +1181,11 @@ namespace CGL {
 
     // Sets the current OpenGL color/style of a given mesh element, according to which elements are currently selected and hovered.
 
-    inline void MeshEdit::setElementStyle(HalfedgeElement* element) {
+    inline void MeshEdit::setElementStyle(HalfedgeElement *element) {
         // Set the draw style according to whether the
         // current mesh element is hovered or selected,
         // giving priority to selection.
-        DrawStyle* style = &defaultStyle;
+        DrawStyle *style = &defaultStyle;
         if (element == selectedFeature.element) {
             style = &selectStyle;
         } else if (element == hoveredFeature.element) {
@@ -1221,7 +1216,7 @@ namespace CGL {
         cerr << "Warning: draw style not defined for current mesh element!" << endl;
     }
 
-    void MeshEdit::drawFaces(HalfedgeMesh& mesh) {
+    void MeshEdit::drawFaces(HalfedgeMesh &mesh) {
 
         for (FaceIter f = mesh.facesBegin(); f != mesh.facesEnd(); f++) {
 
@@ -1265,7 +1260,7 @@ namespace CGL {
 
     }
 
-    void MeshEdit::drawEdges(HalfedgeMesh& mesh) {
+    void MeshEdit::drawEdges(HalfedgeMesh &mesh) {
         for (EdgeIter e = mesh.edgesBegin(); e != mesh.edgesEnd(); e++) // iterate over edges
         {
             Vector3D p0 = e->halfedge()->vertex()->position;
@@ -1281,8 +1276,8 @@ namespace CGL {
         } // done iterating over edges
     }
 
-    void MeshEdit::drawVertices(HalfedgeMesh& mesh) {
-        Vertex* v;
+    void MeshEdit::drawVertices(HalfedgeMesh &mesh) {
+        Vertex *v;
 
         glDisable(GL_DEPTH_TEST);
 
@@ -1312,7 +1307,7 @@ namespace CGL {
         glEnable(GL_DEPTH_TEST);
     }
 
-    void MeshEdit::drawHalfedgeArrow(Halfedge* h) {
+    void MeshEdit::drawHalfedgeArrow(Halfedge *h) {
         setElementStyle(h);
 
         Vector3D p0 = h->vertex()->position;
@@ -1343,8 +1338,8 @@ namespace CGL {
         glEnd();
     }
 
-    void MeshEdit::drawHalfedges(HalfedgeMesh& mesh) {
-        Halfedge* h;
+    void MeshEdit::drawHalfedges(HalfedgeMesh &mesh) {
+        Halfedge *h;
 
         glDisable(GL_DEPTH_TEST);
 
@@ -1360,7 +1355,7 @@ namespace CGL {
         glEnable(GL_DEPTH_TEST);
     }
 
-    void MeshNode::getBounds(Vector3D& low, Vector3D& high) {
+    void MeshNode::getBounds(Vector3D &low, Vector3D &high) {
         double maxValue = numeric_limits<double>::max();
 
         low.x = maxValue;
@@ -1371,7 +1366,7 @@ namespace CGL {
         high.z = -maxValue;
 
         for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
-            Vector3D& p = v->position;
+            Vector3D &p = v->position;
 
             low.x = min(low.x, p.x);
             low.y = min(low.y, p.y);
@@ -1385,7 +1380,7 @@ namespace CGL {
 
     // Centroid / weighted average point.
 
-    void MeshNode::getCentroid(Vector3D& centroid) {
+    void MeshNode::getCentroid(Vector3D &centroid) {
         centroid = Vector3D(0., 0., 0.);
 
         for (VertexIter v = mesh.verticesBegin(); v != mesh.verticesEnd(); v++) {
@@ -1407,11 +1402,11 @@ namespace CGL {
      */
     void MeshNode::fillFeatureStructure(
             // OUTPUT:
-            MeshFeature & feature,
+            MeshFeature &feature,
 
             // INPUTS:
-            MeshFeature & lookup,
-            Vector3D & barycentric_coords,
+            MeshFeature &lookup,
+            Vector3D &barycentric_coords,
             float w) {
         /* Feature on Face Selection algorithm.
          *
@@ -1420,9 +1415,11 @@ namespace CGL {
          * coordinate c is high if (c > high_threshold)
          */
 
-        Face* f = lookup.element->getFace();
+        Face *f = lookup.element->getFace();
         if (f == NULL) {
-            cerr << "Error in Mesh::fillFeatureStructure(): we were asked to find a feature associated with an element that is not a face!" << endl;
+            cerr <<
+            "Error in Mesh::fillFeatureStructure(): we were asked to find a feature associated with an element that is not a face!" <<
+            endl;
             exit(1);
         }
 
@@ -1489,7 +1486,7 @@ namespace CGL {
     }
 
     void MeshEdit::flipSelectedEdge(void) {
-        Edge* e = selectedFeature.element->getEdge();
+        Edge *e = selectedFeature.element->getEdge();
         if (e == NULL) {
             cerr << "Must select an edge." << endl;
             return;
@@ -1503,7 +1500,7 @@ namespace CGL {
     }
 
     void MeshEdit::splitSelectedEdge(void) {
-        Edge* e = selectedFeature.element->getEdge();
+        Edge *e = selectedFeature.element->getEdge();
         if (e == NULL) {
             cerr << "Must select an edge." << endl;
             return;

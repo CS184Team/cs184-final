@@ -4,9 +4,9 @@ project(ColladaViewer)
 #-------------------------------------------------------------------------------
 # Build options
 #-------------------------------------------------------------------------------
-option(BUILD_LIBCGL "Build with libCGL"         ON)
-option(BUILD_DEBUG     "Build with debug settings"    OFF)
-option(BUILD_DOCS      "Build documentation"          OFF)
+option(BUILD_LIBCGL "Build with libCGL" ON)
+option(BUILD_DEBUG "Build with debug settings" OFF)
+option(BUILD_DOCS "Build documentation" OFF)
 
 #-------------------------------------------------------------------------------
 # Platform-specific settings
@@ -15,133 +15,133 @@ option(BUILD_DOCS      "Build documentation"          OFF)
 ###################
 # Building on OSX #
 ###################
-if(APPLE)
+if (APPLE)
 
-  # Clang only
-  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "CLANG")
+    # Clang only
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "CLANG")
 
-    # OSX Framework dependencies
-    if(NOT BUILD_LIBCGL)
-      include_directories( "/System/Library/Frameworks" )
-      find_library (COCOA_LIBRARIES Cocoa)
-      find_library (IOKIT_LIBRARIES IOkit)
-      find_library (COREVIDEO_LIBRARIES CoreVideo)
-    endif()
+        # OSX Framework dependencies
+        if (NOT BUILD_LIBCGL)
+            include_directories("/System/Library/Frameworks")
+            find_library(COCOA_LIBRARIES Cocoa)
+            find_library(IOKIT_LIBRARIES IOkit)
+            find_library(COREVIDEO_LIBRARIES CoreVideo)
+        endif ()
 
-    # Clang configuration
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+        # Clang configuration
+        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 
-      set(CLANG_CXX_FLAGS "-std=c++11 -m64")
+            set(CLANG_CXX_FLAGS "-std=c++11 -m64")
 
-      if(BUILD_DEBUG)
-        set(CMAKE_BUILD_TYPE Debug)
-        set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -g")
-      else(BUILD_DEBUG)
-        set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -O3")
-        set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -funroll-loops")
-        set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -Wno-narrowing")
-        set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -Wno-deprecated-register")
-      endif(BUILD_DEBUG)
+            if (BUILD_DEBUG)
+                set(CMAKE_BUILD_TYPE Debug)
+                set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -g")
+            else (BUILD_DEBUG)
+                set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -O3")
+                set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -funroll-loops")
+                set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -Wno-narrowing")
+                set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -Wno-deprecated-register")
+            endif (BUILD_DEBUG)
 
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_CXX_FLAGS}")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_CXX_FLAGS}")
 
-    endif()
+        endif ()
 
-    # GCC configuration
-    if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        # GCC configuration
+        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
-      set(GCC_CXX_FLAGS "-std=gnu++11 -m64")
+            set(GCC_CXX_FLAGS "-std=gnu++11 -m64")
 
-      if(BUILD_DEBUG)
-        set(CMAKE_BUILD_TYPE Debug)
-        set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -g")
-      else(BUILD_DEBUG)
-        set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -O3")
-        set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -fopenmp")
-      endif(BUILD_DEBUG)
+            if (BUILD_DEBUG)
+                set(CMAKE_BUILD_TYPE Debug)
+                set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -g")
+            else (BUILD_DEBUG)
+                set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -O3")
+                set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -fopenmp")
+            endif (BUILD_DEBUG)
 
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CXX_FLAGS}")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CXX_FLAGS}")
 
-    endif()
+        endif ()
 
-  endif()
+    endif ()
 
-endif(APPLE)
+endif (APPLE)
 
 ##################
 # Build on Linux #
 ##################
 set(LINUX UNIX AND NOT APPLE)
-if(LINUX)
+if (LINUX)
 
-  # GCC only
-  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # GCC only
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
-    set(GCC_CXX_FLAGS "-std=gnu++11 -m64")
+        set(GCC_CXX_FLAGS "-std=gnu++11 -m64")
 
-    # X11 Dependencies
-    if(NOT BUILD_LIBCGL)
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXi")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXxf86vm")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXinerama")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXcursor")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXfixes")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXrandr")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXext")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXrender")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lX11")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lpthread")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lxcb")
-      set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXau")
-    endif()
+        # X11 Dependencies
+        if (NOT BUILD_LIBCGL)
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXi")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXxf86vm")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXinerama")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXcursor")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXfixes")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXrandr")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXext")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXrender")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lX11")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lpthread")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lxcb")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -lXau")
+        endif ()
 
-    # Debug configuration
-    if(BUILD_DEBUG)
-        set(CMAKE_BUILD_TYPE Debug)
-        set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -g")
-    else(BUILD_DEBUG)
-        set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -O3")
-        set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -fopenmp")
-    endif(BUILD_DEBUG)
+        # Debug configuration
+        if (BUILD_DEBUG)
+            set(CMAKE_BUILD_TYPE Debug)
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -g")
+        else (BUILD_DEBUG)
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -O3")
+            set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -fopenmp")
+        endif (BUILD_DEBUG)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CXX_FLAGS}")
 
-  endif()
+    endif ()
 
-endif(LINUX)
+endif (LINUX)
 
 ####################
 # Build on Windows #
 ####################
-if(WIN32)
+if (WIN32)
 
-  if(MSVC)
+    if (MSVC)
 
-    set(MSVC_CXX_FLAGS "-std=gnu++11")
+        set(MSVC_CXX_FLAGS "-std=gnu++11")
 
-    if(BUILD_DEBUG)
-        set(CMAKE_BUILD_TYPE Debug)
-    else(BUILD_DEBUG)
-    endif(BUILD_DEBUG)
+        if (BUILD_DEBUG)
+            set(CMAKE_BUILD_TYPE Debug)
+        else (BUILD_DEBUG)
+        endif (BUILD_DEBUG)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MSVC_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MSVC_CXX_FLAGS}")
 
-  endif(MSVC)
+    endif (MSVC)
 
-  if(MINGW)
+    if (MINGW)
 
-    set(MSVC_CXX_FLAGS "-std=gnu++11")
+        set(MSVC_CXX_FLAGS "-std=gnu++11")
 
-    if(BUILD_DEBUG)
-        set(CMAKE_BUILD_TYPE Debug)
-    else(BUILD_DEBUG)
-    endif(BUILD_DEBUG)
+        if (BUILD_DEBUG)
+            set(CMAKE_BUILD_TYPE Debug)
+        else (BUILD_DEBUG)
+        endif (BUILD_DEBUG)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MSVC_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MSVC_CXX_FLAGS}")
 
-  endif(MINGW)
+    endif (MINGW)
 
-endif(WIN32)
+endif (WIN32)
 
 #-------------------------------------------------------------------------------
 # Find dependencies
@@ -152,14 +152,14 @@ find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
 
 # CGL
-if(BUILD_LIBCGL)
-  add_subdirectory(CGL)
-  include_directories(CGL/include)
-else(BUILD_LIBCGL)
-  find_package(CGL REQUIRED)
-  find_package(GLEW REQUIRED)
-  find_package(GLFW REQUIRED)
-endif(BUILD_LIBCGL)
+if (BUILD_LIBCGL)
+    add_subdirectory(CGL)
+    include_directories(CGL/include)
+else (BUILD_LIBCGL)
+    find_package(CGL REQUIRED)
+    find_package(GLEW REQUIRED)
+    find_package(GLFW REQUIRED)
+endif (BUILD_LIBCGL)
 
 
 #-------------------------------------------------------------------------------
@@ -168,12 +168,10 @@ endif(BUILD_LIBCGL)
 add_subdirectory(src)
 
 # build documentation 
-if(BUILD_DOCS)
-  find_package(DOXYGEN)
-  if(DOXYGEN_FOUND AND BUILD_DOCS)
-    add_subdirectory(docs)
-  endif()
-endif()
+if (BUILD_DOCS)
+    find_package(DOXYGEN)
+    if (DOXYGEN_FOUND AND BUILD_DOCS)
+        add_subdirectory(docs)
+    endif ()
+endif ()
 
-# Install settings
-set(CMAKE_INSTALL_PREFIX "${ColladaViewer_SOURCE_DIR}/")

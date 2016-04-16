@@ -5,6 +5,7 @@
 #include "bezierPatch.h"
 #include "mergeVertices.h"
 #include "shaderUtils.h"
+#include "XYZRenderer.h"
 
 #include <iostream>
 
@@ -67,9 +68,11 @@ int main(int argc, char** argv) {
 
     // create collada_viewer
     MeshEdit* collada_viewer = new MeshEdit();
+//    XYZRenderer* renderer = new XYZRenderer();
 
     // set collada_viewer as renderer
     viewer.set_renderer(collada_viewer);
+//    viewer.set_renderer(renderer);
 
     // init viewer
     viewer.init();
@@ -77,10 +80,12 @@ int main(int argc, char** argv) {
     // load tests
     if (argc == 2) {
         if (loadFile(collada_viewer, argv[1]) < 0) exit(0);
+//
     } else {
         msg("Usage: collada_viewer <path to scene file>");
         exit(0);
     }
+//    renderer->load(argv[1]);
 
     // start viewer
     viewer.start();
