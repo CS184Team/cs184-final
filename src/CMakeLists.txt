@@ -14,7 +14,6 @@ set(COLLADA_VIEWER_SOURCE
         meshEdit.cpp
         main.cpp
         png.cpp
-        XYZRenderer.cpp
         )
 
 # Collada viewer header
@@ -32,7 +31,6 @@ set(COLLADA_VIEWER_HEADER
         shaderUtils.h
         mergeVertices.h
         png.h
-        XYZRenderer.h
         )
 
 

@@ -14,9 +14,9 @@ using namespace CGL;
 
 #define msg(s) cerr << "[Collada Viewer] " << s << endl;
 
-int loadFile(MeshEdit* collada_viewer, const char* path) {
+int loadFile(MeshEdit *collada_viewer, const char *path) {
 
-    Scene* scene = new Scene();
+    Scene *scene = new Scene();
 
     std::string path_str = path;
     if (path_str.substr(path_str.length() - 4, 4) == ".dae") {
@@ -25,14 +25,14 @@ int loadFile(MeshEdit* collada_viewer, const char* path) {
             return -1;
         }
     } else if (path_str.substr(path_str.length() - 4, 4) == ".bez") {
-        Camera* cam = new Camera();
+        Camera *cam = new Camera();
         cam->type = CAMERA;
         Node node;
         node.instance = cam;
         scene->nodes.push_back(node);
-        Polymesh* mesh = new Polymesh();
+        Polymesh *mesh = new Polymesh();
 
-        FILE* file = fopen(path, "r");
+        FILE *file = fopen(path, "r");
         int n = 0;
         fscanf(file, "%d", &n);
         for (int i = 0; i < n; i++) {
@@ -46,6 +46,37 @@ int loadFile(MeshEdit* collada_viewer, const char* path) {
         mesh->type = POLYMESH;
         node.instance = mesh;
         scene->nodes.push_back(node);
+    } else if (path_str.substr(path_str.length() - 4, 4) == ".xyz") {
+//        Camera *cam = new Camera();
+//        cam->type = CAMERA;
+//        Node node;
+//        node.instance = cam;
+//        scene->nodes.push_back(node);
+//        Polymesh *mesh = new Polymesh();
+//
+//        FILE *file = fopen(path, "r");
+//        if (!file) return -1;
+//
+//        char line[256];
+//        long nVertices = -1;
+//        fgets(line, sizeof(line), file);
+//        sscanf(line, "%li", &nVertices);
+//        if (nVertices == -1) return -1;
+//
+//        std::vector<Vector3D> vertices;
+//        vertices.reserve((unsigned long) nVertices);
+//        while (fgets(line, sizeof(line), file)) {
+//            GLfloat x, y, z;
+//            sscanf(line, "%f %f %f", &x, &y, &z);
+//            vertices.push_back(Vector3D(x, y, z));
+//        }
+//        fclose(file);
+//
+//        mesh->vertices = vertices;
+//        mesh->type = POLYMESH;
+//        node.instance = mesh;
+//        scene->nodes.push_back(node);
+        return -1;
     } else {
         return -1;
     }
@@ -61,13 +92,13 @@ int loadFile(MeshEdit* collada_viewer, const char* path) {
     return 0;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
     // create viewer
     Viewer viewer = Viewer();
 
     // create collada_viewer
-    MeshEdit* collada_viewer = new MeshEdit();
+    MeshEdit *collada_viewer = new MeshEdit();
 //    XYZRenderer* renderer = new XYZRenderer();
 
     // set collada_viewer as renderer
