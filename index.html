@@ -83,8 +83,7 @@
             accuracy of
             the reconstruction algorithm. We will be using the <code>HalfEdge</code> data structure to
             implement our mesh
-            reconstruction algorithms. Our new code is written in c++ and compiled using gcc/g++. If an extensive amount
-            of new files are written, the CMake resources will be edited to include compiling the new files. The models
+            reconstruction algorithms. Our new code is written in c++ and compiled using gcc/g++. The models
             used to test our mesh reconstruction algorithms are from the Stanford 3D scanning repository. We will also
             be using <a href="http://w3.impa.br/~diego/software/rply/">RPly</a>, a small ANSI C library for parsing
             <code>.ply</code> files. This library made it possible for us to create the <code>ply2xyz</code> converter
@@ -95,10 +94,7 @@
         </p>
         <div class="row">
             <div class="col-sm-6">
-                Below are the first few lines of an example <code>.ply</code> file. Notice how the vertex data is
-                encoded in a
-                non-ASCII format, making it hard to parse. In addition, there is an unnecessary header, and data about
-                vertex indices and faces.
+                <h4>dragon.ply</h4>
                  <pre>ply
 format binary_big_endian 1.0
 element vertex 3609600
@@ -110,11 +106,13 @@ property list uchar int vertex_indices
 end_header
 Á£â‘ÁKf?Þ‹‹Á£$éÁKå?ß^íÁ£uSÁJ.?çåÝÁ¤IøÁI“é?å_ÌÁ¤C×ÁL‰g?ÕñÁ£§EÁMBD?Õ(ƒÁ¤¬æÁK?Ûd¦Á¢¦‘ÁJ‡~?é°Á£éÁM·H?ÔøVÁ¢m±ÁLJ]
 ...</pre>
+                Above are the first few lines of an example <code>.ply</code> file. Notice how the vertex data is
+                encoded in a
+                non-ASCII format, making it hard to parse. In addition, there is an unnecessary header, and data about
+                vertex indices and faces.
             </div>
             <div class="col-sm-6">
-                Below are the first few lines of the above file converted to <code>.xyz</code> format. Notice how the
-                first line tells us the number of vertices, and the lines below it just tell us the data for each
-                vertex.
+                <h4>dragon.xyz</h4>
                 <pre>3609600
 -20.4856 -12.7125 1.73863
 -20.393 -12.7436 1.74508
@@ -126,6 +124,9 @@ end_header
 -20.3313 -12.6581 1.82079
 -20.3779 -12.8572 1.66383
 ...</pre>
+                Above are the first few lines of the above file converted to <code>.xyz</code> format. Notice how the
+                first line tells us the number of vertices, and the lines below it just tell us the data for each
+                vertex.
             </div>
         </div>
         <h3>Goals and deliverables</h3>
@@ -133,19 +134,25 @@ end_header
         <ul>
             <li>Implementation of <a href="http://www.research.ibm.com/vistechnology/pdf/bpa_tvcg.pdf">“The
                 Ball-Pivoting Algorithm for Surface Reconstruction”</a> algorithm to create a mesh
-                reconstruction from a point cloud, through the use of the HalfEdge data structure
+                reconstruction from a point cloud, through the use of the <code>HalfEdge</code> data structure.
+                Essentially, this algorithm will give us a function which converts from <code>.xyz</code> to
+                <code>.dae</code>.
             </li>
             <li>
                 Performance comparison graphs between the two algorithms. Performance will
                 involve timing the system on certain 3D scanned files. For a file input, we want the algorithm to have
-                fast mesh creation but at the same time be accurate. A certain metric is FLOPS, but we can also use a
-                timer between the start of the mesh creation and the end using different implementations of algorithms
-                (either the basic implementation or modified implementations of the basic one) to see which ones obtain
+                fast mesh creation but at the same time be accurate. A precise metric would be the number of <a
+                    href="https://en.wikipedia.org/wiki/FLOPS">FLOP</a>s required by each algorithm. However, we will
+                instead use a timer (for simplicity) between the start of the mesh creation and the end using different
+                implementations of
+                algorithms
+                (either the basic implementation or modified implementations of the basic one) to see which ones
+                obtain
                 the fastest runtime.
                 For accuracy, there are some rather advanced statistical calculations for judging mesh accuracy.
-                http://cs184.eecs.berkeley.edu/cs184_sp16/lecture/geometry-processing/slide_045
-                This slide gives a good basis for determining the “goodness” of a mesh rendering. If we check every mesh
-                triangle and determine if it holds for a certain threshold… 80% of triangles, for example. We have a
+                <a href="http://cs184.eecs.berkeley.edu/cs184_sp16/lecture/geometry-processing/slide_045">This slide</a>
+                gives a good basis for determining the “goodness” of a mesh rendering. If we check every mesh
+                triangle and determine if it holds for a certain threshold, say, 80% of triangles. We have a
                 list of triangles in our mesh and if we iterate through and find at least 80% pass, we can stop and
                 declare the mesh “good”.
             </li>
