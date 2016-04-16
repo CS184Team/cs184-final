@@ -136,8 +136,18 @@ end_header
                 reconstruction from a point cloud, through the use of the HalfEdge data structure
             </li>
             <li>
-                Timing and accuracy comparison graphs between the two algorithms. Timing can be implemented easily in
-                the code, but we will use a visual comparison of accuracy between the two meshes.
+                Performance comparison graphs between the two algorithms. Performance will
+                involve timing the system on certain 3D scanned files. For a file input, we want the algorithm to have
+                fast mesh creation but at the same time be accurate. A certain metric is FLOPS, but we can also use a
+                timer between the start of the mesh creation and the end using different implementations of algorithms
+                (either the basic implementation or modified implementations of the basic one) to see which ones obtain
+                the fastest runtime.
+                For accuracy, there are some rather advanced statistical calculations for judging mesh accuracy.
+                http://cs184.eecs.berkeley.edu/cs184_sp16/lecture/geometry-processing/slide_045
+                This slide gives a good basis for determining the “goodness” of a mesh rendering. If we check every mesh
+                triangle and determine if it holds for a certain threshold… 80% of triangles, for example. We have a
+                list of triangles in our mesh and if we iterate through and find at least 80% pass, we can stop and
+                declare the mesh “good”.
             </li>
         </ul>
         <h4>Hope to deliver</h4>
