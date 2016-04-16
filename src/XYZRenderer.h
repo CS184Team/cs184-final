@@ -82,6 +82,14 @@ namespace CGL {
         bool mouse_rotate;
 
         void updateMouseCoordinates(float x, float y); // updates stored mouse_x/y
+
+
+        //BPA algorithm method and corresponding BPA helper methods
+        void BPA(std::vector<Vector3D> *sigma, double rho);
+
+        void find_seed_triange(Vector3D& p1, Vector3D& p2, ector3D& p3)
+
+
     };
 
 } // namespace CGL

@@ -286,4 +286,15 @@ namespace CGL {
         view_focus = centroid;
         up = Z_UP;
     }
+
+    void XYZRenderer::BPA(std::vector<Vector3D> *surf_samples, double rho) {
+
+    }
+
+    void XYZRenderer::find_seed_triange(Vector3D& p1, Vector3D& p2, ector3D& p3) {
+        //
+        //Pick any p1 not yet used by the reconstructed
+    }
+
+
 }
