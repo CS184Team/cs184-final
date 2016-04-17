@@ -15,7 +15,6 @@ set(COLLADA_VIEWER_SOURCE
         main.cpp
         png.cpp
         rply.c
-        voxel.cpp
         )
 
 # Collada viewer header
@@ -34,6 +33,7 @@ set(COLLADA_VIEWER_HEADER
         mergeVertices.h
         png.h
         rply.h
+        voxel.h
         )
 
 #-------------------------------------------------------------------------------
