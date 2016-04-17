@@ -168,7 +168,7 @@ namespace CGL {
                   v_x, v_y, v_z, // point looking at.
                   up_x, up_y, up_z); // up direction.
 
-        float eyePos[] = {cx, cy, cz};
+        float eyePos[] = {(float) cx, (float) cy, (float) cz};
 
         glUseProgram(shaderProgID);
         glUniform3fv(glGetUniformLocation(shaderProgID, "eyePos"),

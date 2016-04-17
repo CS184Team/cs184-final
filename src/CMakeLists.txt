@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 # Collada viewer source
 set(COLLADA_VIEWER_SOURCE
         bezierPatch.cpp
@@ -15,9 +18,7 @@ set(COLLADA_VIEWER_SOURCE
         main.cpp
         png.cpp
         rply.c
-        voxel.cpp
-        )
-#        BPA.cpp)
+        voxel.cpp)
 
 # Collada viewer header
 set(COLLADA_VIEWER_HEADER
@@ -34,9 +35,7 @@ set(COLLADA_VIEWER_HEADER
         shaderUtils.h
         mergeVertices.h
         png.h
-        rply.h
-        )
-#        BPA.h)
+        rply.h)
 
 #-------------------------------------------------------------------------------
 # Set include directories
@@ -71,6 +70,11 @@ add_executable(xyzview
         XYZRenderer.h
         )
 
+add_executable(voxeltest
+        voxel.cpp VoxelTest.cpp rply.c
+        rply.h voxel.h
+        )
+
 target_link_libraries(meshedit
         CGL ${CGL_LIBRARIES}
         glew ${GLEW_LIBRARIES}
@@ -80,6 +84,14 @@ target_link_libraries(meshedit
         )
 
 target_link_libraries(xyzview
+        CGL ${CGL_LIBRARIES}
+        glew ${GLEW_LIBRARIES}
+        glfw ${GLFW_LIBRARIES}
+        ${OPENGL_LIBRARIES}
+        ${FREETYPE_LIBRARIES}
+        )
+
+target_link_libraries(voxeltest
         CGL ${CGL_LIBRARIES}
         glew ${GLEW_LIBRARIES}
         glfw ${GLFW_LIBRARIES}
@@ -100,4 +112,4 @@ endif (APPLE)
 set(EXECUTABLE_OUTPUT_PATH ..)
 
 # Install to project root
-install(TARGETS meshedit xyzview DESTINATION ${ColladaViewer_SOURCE_DIR})
+install(TARGETS meshedit xyzview voxeltest DESTINATION ${ColladaViewer_SOURCE_DIR})
