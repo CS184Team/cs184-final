@@ -99,28 +99,11 @@ int main(int argc, char **argv) {
 
         p_ply ply = ply_open(iname, NULL, 0, NULL);
         if (!ply) {
-            printf("[XYZ] Error: Could not open ifile (%s) for reading. Exiting", iname);
+            printf("[XYZ] Error: Could not open ifile (%s) for reading. Exiting\n", iname);
             return 1;
         }
         if (!ply_read_header(ply)) {
-            printf("[XYZ] Error: Could not read ply header from ifile (%s). Exiting", iname);
-            return 1;
-        }
-
-        p_ply_element element = NULL;
-        int verticesFound = 0;
-        while ((element = ply_get_next_element(ply, element))) {
-            p_ply_property property = NULL;
-            long ninstances = 0;
-            const char *element_name;
-            ply_get_element_info(element, &element_name, &ninstances);
-            if (!strcmp(element_name, "vertex")) {
-                verticesFound = 1;
-                break;
-            }
-        }
-        if (!verticesFound) {
-            printf("[XYZ] Error: no vertex found in ply file header! Exiting.");
+            printf("[XYZ] Error: Could not read ply header from ifile (%s). Exiting\n", iname);
             return 1;
         }
 
@@ -135,31 +118,31 @@ int main(int argc, char **argv) {
         if (!ply_read(ply)) return 1;
         ply_close(ply);
 
-        Polymesh mesh = Polymesh();
+        Polymesh *mesh = new Polymesh();
 
-        mesh.vertices.reserve((unsigned long) nVertices);
+        mesh->vertices.reserve((unsigned long) nVertices);
         for (int i = 0; i < nVertices; ++i) {
             double *vertex = vertices + i * 3;
-            mesh.vertices.push_back(Vector3D(vertex[0], vertex[1], vertex[2]));
+            mesh->vertices.push_back(Vector3D(vertex[0], vertex[1], vertex[2]));
         }
-        mesh.polygons.reserve((unsigned long) nFaces);
+        mesh->polygons.reserve((unsigned long) nFaces);
         for (int i = 0; i < nFaces; ++i) {
             unsigned int *face = faces + i * 3;
             Polygon poly = Polygon();
             poly.vertex_indices.push_back(face[0]);
             poly.vertex_indices.push_back(face[1]);
             poly.vertex_indices.push_back(face[2]);
-            mesh.polygons.push_back(poly);
+            mesh->polygons.push_back(poly);
         }
 
         ofile = fopen(oname, "w");
         if (!ofile) {
-            printf("[XYZ] Error: Could not open ofile (%s) for writing. Exiting", oname);
+            printf("[XYZ] Error: Could not open ofile (%s) for writing. Exiting\n", oname);
             return 1;
         }
 
         fprintf(ofile, "%li\n", nVertices);
-        MeshNode meshNode(mesh);
+        MeshNode meshNode(*mesh);
         for (VertexIter vertex = meshNode.mesh.verticesBegin(); vertex != meshNode.mesh.verticesEnd(); ++vertex) {
             Vector3D position = vertex->position;
             double x = position[0];
@@ -176,7 +159,19 @@ int main(int argc, char **argv) {
         vertices = NULL;
         faces = NULL;
         fclose(ofile);
-        return 0;
+        if (argc == 3) {
+            return 0;
+        }
+        Camera *cam = new Camera();
+        cam->type = CAMERA;
+        Node node;
+        node.instance = cam;
+        Scene *scene = new Scene();
+        scene->nodes.push_back(node);
+
+        mesh->type = POLYMESH;
+        node.instance = mesh;
+        scene->nodes.push_back(node);
     }
 
     // create viewer
@@ -194,6 +189,8 @@ int main(int argc, char **argv) {
     // load tests
     if (argc == 2) {
         if (loadFile(collada_viewer, argv[1]) < 0) exit(0);
+    } else if (argc == 4) {
+
     } else {
         msg("Usage: collada_viewer <path to scene file>");
         exit(0);

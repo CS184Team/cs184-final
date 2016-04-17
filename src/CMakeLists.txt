@@ -16,6 +16,7 @@ set(COLLADA_VIEWER_SOURCE
         png.cpp
         rply.c
         )
+#        BPA.cpp)
 
 # Collada viewer header
 set(COLLADA_VIEWER_HEADER
@@ -34,6 +35,7 @@ set(COLLADA_VIEWER_HEADER
         png.h
         rply.h
         )
+#        BPA.h)
 
 #-------------------------------------------------------------------------------
 # Set include directories

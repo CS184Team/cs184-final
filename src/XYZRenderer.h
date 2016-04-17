@@ -82,6 +82,7 @@ namespace CGL {
         bool mouse_rotate;
 
         void updateMouseCoordinates(float x, float y); // updates stored mouse_x/y
+        double k;
     };
 
 } // namespace CGL

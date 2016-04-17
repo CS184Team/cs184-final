@@ -60,7 +60,7 @@ namespace CGL {
             glEnd();
             glBegin(GL_LINES);
             glVertex3d(vertex[0], vertex[1], vertex[2]);
-            glVertex3d(vertex[0] + vertex[3], vertex[1] + vertex[4], vertex[2] + vertex[5]);
+            glVertex3d(vertex[0] + vertex[3] * k, vertex[1] + vertex[4] * k, vertex[2] + vertex[5] * k);
             glEnd();
             vertex += 6;
         }
@@ -281,7 +281,7 @@ namespace CGL {
         min_view_distance = canonical_view_distance / 10.0;
         view_distance = canonical_view_distance * 2.;
         max_view_distance = canonical_view_distance * 20.;
-
+        k = canonical_view_distance / 1000.0;
         camera_angles = Vector3D(0., 0., 0.);
         view_focus = centroid;
         up = Z_UP;
