@@ -73,7 +73,7 @@ vector<vector<int> > VoxelArray::surrounding_voxels(const Vector3D &xyz) const {
     for (int xj = max(xi - 1, 0); xj <= min(xi + 1, xlen - 1); ++xj) {
         for (int yj = max(yi - 1, 0); yj <= min(yi + 1, ylen - 1); ++yj) {
             for (int zj = max(zi - 1, 0); zj <= min(zi + 1, zlen - 1); ++zj) {
-                voxels.push_back(data[flatten_index(xi, yi, zi)]);
+                voxels.push_back(data[flatten_index(xj, yj, zj)]);
             }
         }
     }
