@@ -60,7 +60,7 @@ int VoxelArray::get_voxel_index(const Vector3D &xyz) const {
 }
 
 int VoxelArray::flatten_index(int xi, int yi, int zi) const {
-    return zi * (xlen * ylen) + yi * (xlen) + xi;
+    return xi + xlen * (yi + ylen * zi);
 }
 
 vector<vector<int> > VoxelArray::surrounding_voxels(const Vector3D &xyz) const {

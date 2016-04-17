@@ -27,10 +27,6 @@ private:
     Vector3D low;
     Vector3D high;
 
-    // Returns a list of voxel indices, which correspond to the voxels surrounding
-    // the point at xyz. Includes the local voxel
-    // vector<int> surrounding_voxel_indices(Vector3D xyz);
-
     // Returns a list of the neighboring voxels (list of lists of point cloud indices)
     // Includes the local voxel
     // Maximum of 27 voxels, minimum of 8 voxels (corner)
@@ -39,6 +35,7 @@ private:
     void get_voxel_index(const Vector3D &xyz, int &xi, int &yi, int &zi) const;
 
     const vector<Vector3D> &cloud; // Reference to point cloud
+    
     int get_voxel_index(const Vector3D &xyz) const;
 
     int flatten_index(int xi, int yi, int zi) const;
