@@ -3,22 +3,11 @@
 //
 #include "../voxel.h"
 #include "../rply.h"
+#include "../Parser.h"
 #include <iostream>
 
 using namespace std;
 using namespace CGL;
-
-static double *vertices;
-static int vertIdx;
-
-static int vertex_cb(p_ply_argument argument) {
-    long eol;
-    ply_get_argument_user_data(argument, NULL, &eol);
-    double value = ply_get_argument_value(argument);
-    vertices[vertIdx] = value;
-    ++vertIdx;
-    return 1;
-}
 
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -26,34 +15,15 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    char *iname = argv[1];
-
-    p_ply ply = ply_open(iname, NULL, 0, NULL);
-    if (!ply) {
-        printf("[XYZ] Error: Could not open ifile (%s) for reading. Exiting\n", iname);
-        return 1;
-    }
-    if (!ply_read_header(ply)) {
-        printf("[XYZ] Error: Could not read ply header from ifile (%s). Exiting\n", iname);
-        return 1;
-    }
-
-    long nVertices = ply_set_read_cb(ply, "vertex", "x", vertex_cb, NULL, 0);
-    ply_set_read_cb(ply, "vertex", "y", vertex_cb, NULL, 0);
-    ply_set_read_cb(ply, "vertex", "z", vertex_cb, NULL, 1);
-
-    vertices = (double *) malloc(sizeof(double) * nVertices * 3);
-
-    if (!ply_read(ply)) return 1;
-    ply_close(ply);
-
     vector<Vector3D> cloud;
-    for (int i = 0; i < nVertices; ++i) {
-        double *vertex = vertices + i * 3;
-        cloud.push_back(Vector3D(vertex[0], vertex[1], vertex[2]));
+    vector<Vector3D> normals;
+    Parser parser;
+    if (!parser.parsePly(argv[1], cloud, normals)) {
+        printf("Something with wrong parsing %s. Exiting.\n", argv[1]);
+        return 1;
     }
 
-    double rho = 0.001;
+    double rho = 0.0001;
 
     VoxelArray voxelArray(cloud, rho);
 
@@ -76,7 +46,4 @@ int main(int argc, char **argv) {
             }
         }
     }
-
-    free(vertices);
-    vertices = NULL;
 }
