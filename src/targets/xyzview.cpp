@@ -1,5 +1,5 @@
 #include "CGL/CGL.h"
-#include "XYZRenderer.h"
+#include "../XYZRenderer.h"
 
 using namespace std;
 using namespace CGL;

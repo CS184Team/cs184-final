@@ -1,8 +1,8 @@
 //
 // Created by Michael Snowden on 4/16/16.
 //
-#include "voxel.h"
-#include "rply.h"
+#include "../voxel.h"
+#include "../rply.h"
 #include <iostream>
 
 using namespace std;

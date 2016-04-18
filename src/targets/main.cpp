@@ -1,11 +1,11 @@
 #include "CGL/CGL.h"
 
-#include "collada.h"
-#include "meshEdit.h"
-#include "bezierPatch.h"
-#include "mergeVertices.h"
-#include "shaderUtils.h"
-#include "rply.h"
+#include "../collada.h"
+#include "../meshEdit.h"
+#include "../bezierPatch.h"
+#include "../mergeVertices.h"
+#include "../shaderUtils.h"
+#include "../rply.h"
 
 #include <iostream>
 
