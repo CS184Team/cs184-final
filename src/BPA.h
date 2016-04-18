@@ -12,10 +12,11 @@ using namespace CGL;
 
 class BPA {
 public:
-    BPA(vector<Vector3D> &cloud, double rho);
+    BPA(vector<Vector3D> &cloud, vector<Vector3D> &normals, double rho);
     void findSeedTriangle(int pi, int &ti1, int &ti2, int &ti3);
 private:
     vector<Vector3D> &cloud;
+    vector<Vector3D> &normals;
     double rho;
     VoxelArray voxelArray;
 };

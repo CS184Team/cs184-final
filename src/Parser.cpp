@@ -59,6 +59,11 @@ int Parser::parsePly(char *iname, vector<Vector3D> &vertices, vector<Vector3D> &
     if (!ply_read(ply)) return 1;
     ply_close(ply);
 
+    for (int i = 0; i < nVertices; ++i) {
+        double *vertex = staticVertices + i * 3;
+        vertices.push_back(Vector3D(vertex[0], vertex[1], vertex[2]));
+    }
+
     Polymesh *mesh = new Polymesh();
 
     mesh->vertices.reserve((unsigned long) nVertices);
