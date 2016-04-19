@@ -5,6 +5,8 @@
 #include "Parser.h"
 #include "mesh.h"
 #include "meshEdit.h"
+#include <iostream>
+#include <fstream>
 
 static double *staticVertices;
 static unsigned int *faces;
@@ -94,5 +96,19 @@ int Parser::parsePly(char *iname, vector<Vector3D> &vertices, vector<Vector3D> &
     free(faces);
     staticVertices = NULL;
     faces = NULL;
+    return 1;
+}
+
+int Parser::writeTxt(char *ofile, vector<Vector3D> &vertices, vector<Vector3D> &normals) {
+    std::ofstream ofs(ofile);
+    if (!ofs.is_open()) {
+        return 0;
+    }
+    for (int i = 0; i < vertices.size(); ++i) {
+        const CGL::Vector3D &v = vertices[i];
+        const CGL::Vector3D &n = normals[i];
+        ofs << v.x << " " << v.y << " " << v.z << " " << n.x << " " << n.y << " " << n.z << std::endl;
+    }
+    ofs.close();
     return 1;
 }
