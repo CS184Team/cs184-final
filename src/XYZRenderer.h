@@ -35,8 +35,8 @@ namespace CGL {
         void load(std::string fname);
 
     private:
-        GLfloat *vertices;
-        long nVertices;
+        std::vector<Vector3D> vertices;
+        std::vector<Vector3D> normals;
         Vector3D camera_angles;
         Vector3D view_focus;
         enum e_up {

@@ -112,3 +112,35 @@ int Parser::writeTxt(char *ofile, vector<Vector3D> &vertices, vector<Vector3D> &
     ofs.close();
     return 1;
 }
+
+int Parser::parseTxt(const char *ifile, vector<Vector3D> &vertices, vector<Vector3D> &normals) {
+    std::string line;
+    std::ifstream ifs(ifile);
+    ifs.unsetf(std::ios_base::skipws);
+    int line_count = std::count(std::istream_iterator<char>(ifs), std::istream_iterator<char>(), '\n');
+    ifs.clear();
+    ifs.seekg(0, ifs.beg);
+    vertices.reserve(line_count);
+    if (ifs.is_open()) {
+        int index = 0;
+        while (getline(ifs, line)) {
+            std::istringstream iss(line);
+            double x, y, z, nx, ny, nz;
+            iss >> x;
+            iss >> y;
+            iss >> z;
+            iss >> nx;
+            iss >> ny;
+            iss >> nz;
+            Vector3D position(x, y, z);
+            Vector3D normal(nx, ny, nz);
+            vertices.push_back(position);
+            normals.push_back(normal);
+            ++index;
+        }
+        ifs.close();
+    } else {
+        return 0;
+    }
+    return 1;
+}

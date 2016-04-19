@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script>
+    <title>Some Title</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+<!-- <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#Introduction">Point Cloud to Mesh</a></li>
+            </ul>
+        </div>
+    </div>
+</nav> -->
+<div class="container">
+    <div class="row page-header" id="Introduction">
+        <h1>Point Cloud to Mesh</h1>
+    </div>
+    <h2>Visually debugging vertex normals</h2>
+    <p>
+        For this project, we start with a <code>.ply</code> file containing vertices and triangular face indices. This makes it easy to render the meshes provided using <code>MeshEdit</code>. However, all of the <code>.ply</code> files are missing vertex normal data and face normal data. This data is necessary for the ball-pivoting algorithm (BPA), so we had to figure out a way to extract vertex normals from a set of vertices and faces. Our approach was simple, construct the mesh with the provided faces, and use the <code>MeshEdit</code> code we used to compute vertex-based normals (for lighting) and instead use it for creating <code>.txt</code> files that contained the vertex-normal pairs we needed for BPA. The idea is simple enough, but we couldn't think of a way to test our code without viewing the normals, and our current rendering code would just display the point cloud like this:
+    </p>
+    <img src="images/points.png" class="img-responsive center-block">
+    <p>
+        We decided to add some code to display the normals, but no matter what depth we viewed them at, it was difficult to tell whether or not they were oriented correctly.
+    </p>
+    <img src="images/white1.png" class="img-responsive center-block">
+    <img src="images/white2.png" class="img-responsive center-block">
+    <img src="images/white3.png" class="img-responsive center-block">
+    <p>
+        Finally, we had the idea of adjusting a few parameters to make visual vertex normal debugging possible. If we set the far-clip of the camera to be a low number, we don't see through the object. If we extend the normals, we will get to see them sticking out better on the edges. If we set the origin of the normals to the color red, and the end of the normals to the color green, then if we start zoomed out from the mesh, and we zoom in on a sufficiently convex part of the mesh, we should see green first.
+    </p>
+    <img src="images/1.png" class="img-responsive center-block">
+    <img src="images/2.png" class="img-responsive center-block">
+    <img src="images/3.png" class="img-responsive center-block">
+    <p>
+        Using this method, we were able to verify our code for calculating vertex normals and produce the <code>.txt</code> data we needed, which has this format:
+    </p>
+    <pre>vx1 vy1 vz1 nx1 ny1 nz1
+vx2 vy2 vz2 nx2 ny2 nz2
+.   .   .   .   .   .
+.   .   .   .   .   .
+.   .   .   .   .   .
+vxm vym vzm nxm nym nzm</pre>
+    <p>
+        Here is an example:
+    </p>
+    <pre>5.89458 11.7884 27.2832 -0.83141 -0.404449 0.381023
+-53.3251 67.1044 -57.4501 -0.878005 -0.293709 0.377946
+3.75049 16.5054 29.454 -0.736516 -0.579169 0.349439
+-40.0742 -33.2375 10.7422 -0.859218 -0.0742719 0.50619
+-52.8133 67.0694 -57.5725 -0.844274 -0.203288 0.495858
+-52.4255 66.8347 -57.3804 -0.820147 -0.109775 0.561524</pre>
+</div>
+</body>
+</html>

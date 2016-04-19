@@ -16,6 +16,7 @@ public:
     Parser();
     int parsePly(char *ifile, vector<Vector3D> &vertices, vector<Vector3D> &normals);
     int writeTxt(char *ofile, vector<Vector3D> &vertices, vector<Vector3D> &normals);
+    int parseTxt(const char *ifile, vector<Vector3D> &vertices, vector<Vector3D> &normals);
 private:
 
 };

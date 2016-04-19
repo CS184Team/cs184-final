@@ -26,6 +26,10 @@ foreach(target_file ${APP_SOURCES})
     string(REPLACE ".cpp" "" target_name ${target_file})
     string(REPLACE ".c" "" target_name ${target_name})
     add_executable(${target_name} targets/${target_file})
+    if (APPLE)
+        set_property(TARGET ${target_name} APPEND_STRING PROPERTY COMPILE_FLAGS
+                "-Wno-deprecated-declarations -Wno-c++11-extensions")
+    endif (APPLE)
     target_link_libraries(${target_name}
             MyLib
             CGL ${CGL_LIBRARIES}
@@ -35,10 +39,6 @@ foreach(target_file ${APP_SOURCES})
             ${FREETYPE_LIBRARIES}
             )
     install(TARGETS ${target_name} DESTINATION ${ColladaViewer_SOURCE_DIR})
-    if (APPLE)
-        set_property(TARGET ${target_name} APPEND_STRING PROPERTY COMPILE_FLAGS
-                "-Wno-deprecated-declarations -Wno-c++11-extensions")
-    endif (APPLE)
 endforeach(target_file ${APP_SOURCES})
 
 set(EXECUTABLE_OUTPUT_PATH ..)

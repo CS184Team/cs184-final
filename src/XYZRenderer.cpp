@@ -4,6 +4,7 @@
 
 #include "XYZRenderer.h"
 #include <limits>
+#include "Parser.h"
 
 #define PI 3.14159265
 
@@ -51,18 +52,31 @@ namespace CGL {
                   v_x, v_y, v_z, // point looking at.
                   up_x, up_y, up_z); // up direction.
 
-        float *vertex = vertices;
         glPointSize(1.0f);  // default
         glDisable(GL_DEPTH_TEST);
-        for (long i = 0; i < nVertices; ++i) {
-            glBegin(GL_POINTS);
-            glVertex3d(vertex[0], vertex[1], vertex[2]);
-            glEnd();
-            glBegin(GL_LINES);
-            glVertex3d(vertex[0], vertex[1], vertex[2]);
-            glVertex3d(vertex[0] + vertex[3] * k, vertex[1] + vertex[4] * k, vertex[2] + vertex[5] * k);
-            glEnd();
-            vertex += 6;
+        for (int i = 0; i < vertices.size(); ++i) {
+            if (i % 10 == 0) {
+                const Vector3D &v = vertices[i];
+                const Vector3D &n = normals[i];
+                double x1 = v.x;
+                double y1 = v.y;
+                double z1 = v.z;
+                double x2 = x1 + n.x * k;
+                double y2 = y1 + n.y * k;
+                double z2 = z1 + n.z * k;
+                glBegin(GL_POINTS);
+                // glColor3f(1.0f,0.0f,0.0f);
+                glVertex3d(x1, y1, z1);
+                // glColor3f(0.0f,1.0f,0.0f);
+                glVertex3d(x2, y2, z2);
+                glEnd();
+                // glColor3b(255, 255, 255);
+                // glColor3f(0.0f,0.0f,1.0f);
+                // glBegin(GL_LINES);
+                // glVertex3d(x1, y1, z1);
+                // glVertex3d(x2, y2, z2);
+                // glEnd();
+            }   
         }
         glFlush();
     }
@@ -222,31 +236,19 @@ namespace CGL {
     }
 
     void XYZRenderer::load(std::string fname) {
-        FILE *file = fopen(fname.c_str(), "r");
-        if (!file) return;
-
-        char line[256];
-        nVertices = -1;
-        fgets(line, sizeof(line), file);
-        sscanf(line, "%li", &nVertices);
-        if (nVertices == -1) return;
-
-        free(vertices);
-        vertices = (GLfloat *) malloc(sizeof(GLfloat) * nVertices * 6);
-
-        GLfloat *vertex = vertices;
-        while (fgets(line, sizeof(line), file)) {
-            sscanf(line, "%f %f %f %f %f %f", vertex, vertex + 1, vertex + 2, vertex + 3, vertex + 4, vertex + 5);
-            vertex += 6;
+        Parser parser;
+        vertices.clear();
+        normals.clear();
+        if (!parser.parseTxt(fname.c_str(), vertices, normals)) {
+            printf("Something went wrong reading %s. Exiting.\n", fname.c_str());
+            return;
         }
-        fclose(file);
 
         double maxVal = std::numeric_limits<double>::max();
         Vector3D low(maxVal, maxVal, maxVal);
         Vector3D high(-maxVal, -maxVal, -maxVal);
         Vector3D centroid(0.0, 0.0, 0.0);
-        vertex = vertices;
-        for (int i = 0; i < nVertices; ++i) {
+        for (auto vertex : vertices) {
             GLfloat x = vertex[0];
             GLfloat y = vertex[1];
             GLfloat z = vertex[2];
@@ -271,9 +273,8 @@ namespace CGL {
             centroid.x += x;
             centroid.y += y;
             centroid.z += z;
-            vertex += 6;
         }
-        centroid /= (double) nVertices;
+        centroid /= (double) vertices.size();
 
         // Determine how far away the camera should be.
         // Minimum distance guaranteed to not clip into the model in C - V.
@@ -281,7 +282,7 @@ namespace CGL {
         min_view_distance = canonical_view_distance / 10.0;
         view_distance = canonical_view_distance * 2.;
         max_view_distance = canonical_view_distance * 20.;
-        k = canonical_view_distance / 1000.0;
+        k = canonical_view_distance / 100.0;
         camera_angles = Vector3D(0., 0., 0.);
         view_focus = centroid;
         up = Z_UP;
