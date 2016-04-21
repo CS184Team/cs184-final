@@ -15,11 +15,15 @@
 #include "camera.h"
 #include "light.h"
 
+using namespace std;
+
 namespace CGL {
 
     class XYZRenderer : public Renderer {
 
     public:
+        std::function<void(void)> *render_hook;
+
         virtual void init(void);
 
         virtual void render(void);
@@ -33,6 +37,8 @@ namespace CGL {
         virtual void scroll_event(float offset_x, float offset_y);
 
         void load(std::string fname);
+
+        void setBounds(const vector<Vector3D> &vertices);
 
     private:
         std::vector<Vector3D> vertices;

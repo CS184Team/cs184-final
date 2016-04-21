@@ -13,8 +13,8 @@ namespace CGL {
     void XYZRenderer::init(void) {
         camera_angles = Vector3D(0.0, 0.0, 0.0);
         vfov = 35.f;
-        nearClip = 0.1f;
-        farClip = 1000.f;
+        nearClip = 0.001f;
+        farClip = 1000.0f;
 
         left_down = false;
         right_down = false;
@@ -54,8 +54,15 @@ namespace CGL {
 
         glPointSize(1.0f);  // default
         glDisable(GL_DEPTH_TEST);
+
+        if (render_hook != NULL) {
+            (*render_hook)();
+            glFlush();
+            return;
+        }
+
         for (int i = 0; i < vertices.size(); ++i) {
-            if (i % 10 == 0) {
+            // if (i % 10 == 0) {
                 const Vector3D &v = vertices[i];
                 const Vector3D &n = normals[i];
                 double x1 = v.x;
@@ -65,18 +72,17 @@ namespace CGL {
                 double y2 = y1 + n.y * k;
                 double z2 = z1 + n.z * k;
                 glBegin(GL_POINTS);
-                // glColor3f(1.0f,0.0f,0.0f);
+                glColor3f(1.0f,0.0f,0.0f);
                 glVertex3d(x1, y1, z1);
-                // glColor3f(0.0f,1.0f,0.0f);
+                glColor3f(0.0f,1.0f,0.0f);
                 glVertex3d(x2, y2, z2);
                 glEnd();
-                // glColor3b(255, 255, 255);
-                // glColor3f(0.0f,0.0f,1.0f);
-                // glBegin(GL_LINES);
-                // glVertex3d(x1, y1, z1);
-                // glVertex3d(x2, y2, z2);
-                // glEnd();
-            }   
+                glColor3f(0.0f,0.0f,1.0f);
+                glBegin(GL_LINES);
+                glVertex3d(x1, y1, z1);
+                glVertex3d(x2, y2, z2);
+                glEnd();
+            // }
         }
         glFlush();
     }
@@ -244,6 +250,10 @@ namespace CGL {
             return;
         }
 
+        setBounds(vertices);
+    }
+
+    void XYZRenderer::setBounds(const vector<Vector3D> &vertices) {
         double maxVal = std::numeric_limits<double>::max();
         Vector3D low(maxVal, maxVal, maxVal);
         Vector3D high(-maxVal, -maxVal, -maxVal);
@@ -282,7 +292,7 @@ namespace CGL {
         min_view_distance = canonical_view_distance / 10.0;
         view_distance = canonical_view_distance * 2.;
         max_view_distance = canonical_view_distance * 20.;
-        k = canonical_view_distance / 100.0;
+        k = canonical_view_distance / 10.0;
         camera_angles = Vector3D(0., 0., 0.);
         view_focus = centroid;
         up = Z_UP;

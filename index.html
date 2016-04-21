@@ -25,9 +25,99 @@
     <div class="row page-header" id="Introduction">
         <h1>Point Cloud to Mesh</h1>
     </div>
+    <h2>Project pipeline</h2>
+    <p>
+        For this project, we start with a <code>.ply</code> file containing vertices and triangular face indices. This makes it easy to render the meshes provided using <code>MeshEdit</code>. However, all of the <code>.ply</code> files are missing vertex normal data and face normal data. This data is necessary for the ball-pivoting algorithm (BPA), so we had to figure out a way to extract vertex normals from a set of vertices and faces. Our approach was simple, construct the mesh with the provided faces, and use the <code>MeshEdit</code> code we used to compute vertex-based normals (for lighting) and instead use it for creating <code>.txt</code> files that contained the vertex-normal pairs we needed for BPA.
+    </p>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <h3>
+                State
+            </h3>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>
+                Description
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>.ply</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>face_indices</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                The <code>.ply</code> file is deserialized into a set of <code>positions</code> and <code>face_indices</code>.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>face_indices</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>normals</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                We use <code>MeshEdit</code> to convert face indices into face normals, and then interpolate around a vertex to find vertex normals.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>normals</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>.txt</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                We serialize the <code>positions</code> and <code>normals</code> to a <code>.txt</code> file in order to access them later. This means we don't have to rely on <code>MeshEdit</code> inside of our BPA code because we already have computed the <code>normals</code>.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>.txt</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>normals</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                We deserialize the <code>.txt</code> file into a set of <code>positions</code> and <code>normals</code>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>normals</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>face_indices</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                This is where the BPA algorithm goes. It is the hardest part of the process, and it gives us back the face data.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>face_indices</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>.ply</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                Here, we serialize our <code>positions</code> and <code>face_indices</code> into a <code>.ply</code>, and we've basically come full circle. This makes it easy to compare our input <code>.ply</code> and our output <code>.ply</code>.
+            </p>
+        </div>
+    </div>
     <h2>Visually debugging vertex normals</h2>
     <p>
-        For this project, we start with a <code>.ply</code> file containing vertices and triangular face indices. This makes it easy to render the meshes provided using <code>MeshEdit</code>. However, all of the <code>.ply</code> files are missing vertex normal data and face normal data. This data is necessary for the ball-pivoting algorithm (BPA), so we had to figure out a way to extract vertex normals from a set of vertices and faces. Our approach was simple, construct the mesh with the provided faces, and use the <code>MeshEdit</code> code we used to compute vertex-based normals (for lighting) and instead use it for creating <code>.txt</code> files that contained the vertex-normal pairs we needed for BPA. The idea is simple enough, but we couldn't think of a way to test our code without viewing the normals, and our current rendering code would just display the point cloud like this:
+         We couldn't think of a way to test our code for creating vertex normals without viewing the normals, and our current rendering code would just display the point cloud like this:
     </p>
     <img src="images/points.png" class="img-responsive center-block">
     <p>
@@ -37,7 +127,17 @@
     <img src="images/white2.png" class="img-responsive center-block">
     <img src="images/white3.png" class="img-responsive center-block">
     <p>
-        Finally, we had the idea of adjusting a few parameters to make visual vertex normal debugging possible. If we set the far-clip of the camera to be a low number, we don't see through the object. If we extend the normals, we will get to see them sticking out better on the edges. If we set the origin of the normals to the color red, and the end of the normals to the color green, then if we start zoomed out from the mesh, and we zoom in on a sufficiently convex part of the mesh, we should see green first.
+        Finally, we had the idea of adjusting a few parameters to make visual vertex normal debugging possible.
+    </p>
+    <ul>
+        <li>Extend the length of the normal vector</li>
+        <li>Decrease the far-clip of the camera</li>
+        <li>Make the vertices red</li>
+        <li>Make the normal vectors blue</li>
+        <li>Make the end of the normal vectors green</li>
+    </ul>
+    <p>
+         Then, if we zoom in on the mesh, we should see green before we see red, which would tell us that the normals are indeed facing outwards.
     </p>
     <img src="images/1.png" class="img-responsive center-block">
     <img src="images/2.png" class="img-responsive center-block">
