@@ -1,5 +1,5 @@
 # pushes to "origin writeup"
-# you might need to modify that ^ on line 20
+# you might need to modify that ^ on line 19
 if [[ $# -eq 0 ]] ; then
     echo 'Pass in a message for the commit!:'
     echo 'Ex) -- (No Quotes Needed)'
