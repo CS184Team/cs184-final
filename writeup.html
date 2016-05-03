@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML"></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <title>Point Cloud to Mesh</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+<!-- <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#Introduction">Point Cloud to Mesh</a></li>
+            </ul>
+        </div>
+    </div>
+</nav> -->
+<div class="container">
+    <div class="row page-header" id="Introduction">
+        <h1>Point Cloud to Mesh</h1>
+    </div>
+    <h2>Project pipeline</h2>
+    <p>
+        For this project, we start with a <code>.ply</code> file containing vertices and triangular face indices. This makes it easy to render the meshes provided using <code>MeshEdit</code>. However, all of the <code>.ply</code> files are missing vertex normal data and face normal data. This data is necessary for the ball-pivoting algorithm (BPA), so we had to figure out a way to extract vertex normals from a set of vertices and faces. Our approach was simple, construct the mesh with the provided faces, and use the <code>MeshEdit</code> code we used to compute vertex-based normals (for lighting) and instead use it for creating <code>.txt</code> files that contained the vertex-normal pairs we needed for BPA.
+    </p>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <h3>
+                State
+            </h3>
+        </div>
+        <div class="col-md-6 text-center">
+            <h3>
+                Description
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>.ply</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>face_indices</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                The <code>.ply</code> file is deserialized into a set of <code>positions</code> and <code>face_indices</code>.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>face_indices</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>normals</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                We use <code>MeshEdit</code> to convert face indices into face normals, and then interpolate around a vertex to find vertex normals.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>normals</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>.txt</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                We serialize the <code>positions</code> and <code>normals</code> to a <code>.txt</code> file in order to access them later. This means we don't have to rely on <code>MeshEdit</code> inside of our BPA code because we already have computed the <code>normals</code>.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>.txt</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>normals</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                We deserialize the <code>.txt</code> file into a set of <code>positions</code> and <code>normals</code>
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>normals</code>
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>positions</code> <code>face_indices</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                This is where the BPA algorithm goes. It is the hardest part of the process, and it gives us back the face data.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 text-center">
+            <code>positions</code> <code>face_indices</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <span class="glyphicon glyphicon-arrow-right"></span>
+            <code>.ply</code>
+        </div>
+        <div class="col-md-6 text-center">
+            <p>
+                Here, we serialize our <code>positions</code> and <code>face_indices</code> into a <code>.ply</code>, and we've basically come full circle. This makes it easy to compare our input <code>.ply</code> and our output <code>.ply</code>.
+            </p>
+        </div>
+    </div>
+    <h2>Visually debugging vertex normals</h2>
+    <p>
+         We couldn't think of a way to test our code for creating vertex normals without viewing the normals, and our current rendering code would just display the point cloud like this:
+    </p>
+    <img src="images/points.png" class="img-responsive center-block">
+    <p>
+        We decided to add some code to display the normals, but no matter what depth we viewed them at, it was difficult to tell whether or not they were oriented correctly.
+    </p>
+    <img src="images/white1.png" class="img-responsive center-block">
+    <img src="images/white2.png" class="img-responsive center-block">
+    <img src="images/white3.png" class="img-responsive center-block">
+    <p>
+        Finally, we had the idea of adjusting a few parameters to make visual vertex normal debugging possible.
+    </p>
+    <ul>
+        <li>Extend the length of the normal vector</li>
+        <li>Decrease the far-clip of the camera</li>
+        <li>Make the vertices red</li>
+        <li>Make the normal vectors blue</li>
+        <li>Make the end of the normal vectors green</li>
+    </ul>
+    <p>
+         Then, if we zoom in on the mesh, we should see green before we see red, which would tell us that the normals are indeed facing outwards.
+    </p>
+    <img src="images/1.png" class="img-responsive center-block">
+    <img src="images/2.png" class="img-responsive center-block">
+    <img src="images/3.png" class="img-responsive center-block">
+    <p>
+        Using this method, we were able to verify our code for calculating vertex normals and produce the <code>.txt</code> data we needed, which has this format:
+    </p>
+    <pre>vx1 vy1 vz1 nx1 ny1 nz1
+vx2 vy2 vz2 nx2 ny2 nz2
+.   .   .   .   .   .
+.   .   .   .   .   .
+.   .   .   .   .   .
+vxm vym vzm nxm nym nzm</pre>
+    <p>
+        Here is an example:
+    </p>
+    <pre>5.89458 11.7884 27.2832 -0.83141 -0.404449 0.381023
+-53.3251 67.1044 -57.4501 -0.878005 -0.293709 0.377946
+3.75049 16.5054 29.454 -0.736516 -0.579169 0.349439
+-40.0742 -33.2375 10.7422 -0.859218 -0.0742719 0.50619
+-52.8133 67.0694 -57.5725 -0.844274 -0.203288 0.495858
+-52.4255 66.8347 -57.3804 -0.820147 -0.109775 0.561524</pre>
+
+
+
+<!-- ALLEN'S WRITTEN STUFF -->
+
+
+
+    <h2>Data Structure: VoxelArray</h2>
+    <p>
+        The Ball-Pivoting Algorithm is run on a <code>.txt</code> file, which contains an unordered set of <code>positions</code> and <code>normals</code> for each respective point in the point cloud. In order for the BPA algorithm to work, we need a method to access all of the points within a given radius of any local point. At most for the BPA, we need to obtain all points within $2\rho$ distance from the local point. To allow these queries for neighboring points, we created the <code>VoxelArray</code> data structure.
+    </p>
+    <p>
+        The <code>VoxelArray</code> is a 3D grid of cubic voxels, each voxel having side lengths of $2\rho$. With this voxel side length, we can successfully obtain all of the neighboring points: all points within $2\rho$ of the local point is contained within the local (center) voxel and it's 26 neighboring voxels. (Which constitutes a $3$x$3$x$3$ voxels, $6\rho$ length cube.) The points contained within the 27 local voxels can then be quickly filtered and sorted based on their distances from the local point.
+    </p>
+    <p>
+        The <code>VoxelArray</code> structure has both advantages and disadvantages.
+    </p>
+    <p> Advantages </p>
+    <ul>
+        <li>Fast voxel access: The voxels are all indexed in the <code>VoxelArray</code> for constant time access. Each voxel is a vector container of contained points.</li>
+        <li>Intuitive internal structure: Voxels' indices are a flattened value based upon the integer x-, y-, and z-coordinates of the voxel. Float coordinates can simply be truncated into integers for indexing. Neighboring voxels can be found by $\pm 1$ to the integer x-, y-, and z-coordinates.</li>
+    </ul>
+    <p> Disadvantages </p>
+    <ul>
+        <li>Memory intensive: The entire space of the point cloud is contained within the <code>VoxelArray</code> cube, whose voxels are all indexed and reserved. The amount of memory reserved is directly proportional to the size of the mesh, and inversely prportional to the input radius $\rho$.</li>
+        <li>Empty voxels: Voxels are still allocated space on the memory even when no points are contained within its volume.
+    </ul>
+
+    <h2>Data Structures: Vertex, Edge, Facet</h2>
+    <p>
+        Our BPA implementation uses a mixture of <code>Vertex</code>s, <code>Edge</code>s, and <code>Facet</code>s in order to represent the reconstructed mesh. We do not explicitly need any "mesh" structure which encompasses <code>Vertex</code>, <code>Edge</code>, <code>Facet</code>, because of the nature of the <code>.ply</code> format. <code>.ply</code> files only need to store point positions and faces, which are triangles indexing the points, to represent a mesh. So our final output only requires that we keep track of a list of <code>Vertex</code>s, which contain point positions, and a list of <code>Facet</code>s, which contain sets of 3 <code>Vertex</code>s.
+    </p>
+    <h4>Vertex</h4>
+    <p>
+        A <code>Vertex</code> contains a 3D vector containing a point's position and the point's normal. These two pieces of data are gathered from the input <code>.txt</code> file. All of the points are stored in the "Point <code>Cloud</code>." The <code>Cloud</code> is simply a <code>std::vector</code> of <code>Vertex</code>s. This also happens to be the list of points used in the final output.
+    </p>
+    <p>
+        A <code>Vertex</code> also has a flag indicating whether the it is an inner vertex, which signifies that it has already been included within the reconstructed parts of the mesh -- whether it has already been processed.
+    </p>
+    <h4>Edge</h4>
+    <p>
+        A <code>Facet</code> contains a 3D vector
+    </p>
+    <h4>Facet</h4>
+    <p>
+        A <code>Vertex</code> contains a 3D vector
+    </p>
+
+
+</div>
+</body>
+</html>
