@@ -183,13 +183,15 @@ vxm vym vzm nxm nym nzm</pre>
 -->
 
 
-<!-- INTRODUCTION -->
+<!-- INTRODUCTION --> <br>
 
 
     <h2>Mesh Reconstruction</h2>
     <p>
-        <a href="https://cs184team.github.io/cs184-final/">Project Proposal and Background Information</a>
+        <a href="https://cs184team.github.io/cs184-final/">Project Proposal and Background Information</a><br>
+        <a href="http://www.ipol.im/pub/art/2014/81/article.pdf"><font color="red">INCLUDE A LINK TO JULIE?</font></a>
     </p>
+    <br>
 
     <h2>Overview of the Ball-Pivoting Algorithm</h2>
     <p>
@@ -207,11 +209,17 @@ vxm vym vzm nxm nym nzm</pre>
 
     <ul>
         <li>
+            <em>How is the ball radius chosen?</em> The radius, $\rho$, is obtained empirically based on the size and scale of the input point cloud. In theory, the diameter of the ball should be slightly larger than the average distance between points. So, one might calculate $$\rho = 1.25\times(\dfrac{AverageDistance}{2})$$In the case brought up two bullet points below, for multiple radii, one could scale the original radius to obtain smaller or larger radii. For example, one might use a factor of $2$, $\{0.5\rho, 1.0\rho, 2.0\rho\}$ or a factor of $10$, $\{0.1\rho, 1.0\rho, 10\rho\}$.
+        </li>
+        <br>
+        <li>
             <em>What if the sampled points are too far apart at some locations and the ball "falls through" the surface?</em> When the ball pivots along an edge, it may miss the appropriate point on the surface and instead hit another point on the object or even exactly its three old points. In this case, we check that the normal of the new triangle <code>Facet</code> is consistently oriented with the point's <code>Vertex</code> normals. If it is not, then we reject that triangle.
         </li>
+        <br>
         <li>
             <em>What if the surface has a crease or valley, such that the distance between the surface and itself is less than the size of the ball?</em> In this case, the ball would just roll over the crease and ignore the points within the crease. But, this is not ideal behavior as the reconstructed mesh is not accurate to the object. To fix this, multiple ball radii must be used in BPA: the smaller balls are able to roll into the crease and construct that part of the surface; the larger balls would prevent the "fall throughs" noted in the above point and improve surface continuity.
         </li>
+        <br>
         <li>
             <em>What if the surface is spaced into regions of points such that the ball cannot successfully roll between the regions?</em> The virtual ball is dropped onto the surface multiple times at varying locations. (Actually, our implementation has the ball drop onto all unprocessed sets of three points.) This ensures that the ball captures the entire mesh, even when the points are inconsistently spaced out.
         </li>
@@ -219,12 +227,7 @@ vxm vym vzm nxm nym nzm</pre>
 
 
 
-
-
-
-
-<!-- DATA STRUCTURES -->
-
+<!-- DATA STRUCTURES --> <br>
 
 
     <h2>Data Structure: VoxelArray</h2>
@@ -276,8 +279,7 @@ vxm vym vzm nxm nym nzm</pre>
 
 
 
-<!-- VISUAL DEBUGGER -->
-
+<!-- VISUAL DEBUGGER --> <br>
 
 
     <h2>Visual Debugger</h2>
@@ -286,6 +288,38 @@ vxm vym vzm nxm nym nzm</pre>
     </p>
     <p>
         In addition to implementing BPA, we created a visual debugger. It renders the creation of <em>Seed Triangles</em> and <em>Expansion Triangles</em> in real time.
+    </p>
+
+
+
+<!-- Algorithms --> <br>
+
+    <h2>The Ball-Pivoting Algorithm</h2>
+    <p>
+        FIND SEED TRIANGLE AND THEN EXPAND TRIANGLE
+    </p>
+    <p>
+        The conclusion to BPA is a set of <code>Vertex</code>s and a set of <code>Facet</code>s, whose data will be outputted into a <code>.ply</code> file.
+    </p>
+
+    <h2>Algorithm: Find Seed Triangle</h2>
+    <p>
+
+    </p>
+
+    <h2>Algorithm: Expand Triangulation</h2>
+    <p>
+
+    </p>
+
+    <h2>Algorithm: Find Candidate</h2>
+    <p>
+
+    </p>
+
+    <h2>Algorithm: Multiple Radii</h2>
+    <p>
+        
     </p>
 
 </div>
