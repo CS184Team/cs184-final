@@ -3,7 +3,7 @@
 if [[ $# -eq 0 ]] ; then
     echo 'Pass in a message for the commit!:'
     echo 'Ex)'
-    echo "'""\"Commit Message\"""'"
+    echo "'""Commit Message""'"
     exit 0
 fi
 set -e
