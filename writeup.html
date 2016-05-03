@@ -26,11 +26,13 @@
 </nav> -->
 <div class="container">
     <div class="row page-header" id="Introduction">
-        <h1>Point Cloud to Mesh</h1>
+        <h1>Point Cloud to Mesh, Ball-Pivoting Algorithm<br>
+        <small>Brett Rapponotti, Michael Snowden, and Allen Zeng</small>
+        </h1>
     </div>
     <h2>Project pipeline</h2>
     <p>
-        For this project, we start with a <code>.ply</code> file containing vertices and triangular face indices. This makes it easy to render the meshes provided using <code>MeshEdit</code>. However, all of the <code>.ply</code> files are missing vertex normal data and face normal data. This data is necessary for the ball-pivoting algorithm (BPA), so we had to figure out a way to extract vertex normals from a set of vertices and faces. Our approach was simple, construct the mesh with the provided faces, and use the <code>MeshEdit</code> code we used to compute vertex-based normals (for lighting) and instead use it for creating <code>.txt</code> files that contained the vertex-normal pairs we needed for BPA.
+        For this project, we start with a <code>.ply</code> file containing vertices and triangular face indices. This makes it easy to render the meshes provided using <code>MeshEdit</code>. However, all of the <code>.ply</code> files are missing vertex normal data and face normal data. This data is necessary for the Ball-Pivoting Algorithm (BPA), so we had to figure out a way to extract vertex normals from a set of vertices and faces. Our approach was simple, construct the mesh with the provided faces, and use the <code>MeshEdit</code> code we used to compute vertex-based normals (for lighting) and instead use it for creating <code>.txt</code> files that contained the vertex-normal pairs we needed for BPA.
     </p>
     <div class="row">
         <div class="col-md-6 text-center">
@@ -38,6 +40,7 @@
                 State
             </h3>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
             <h3>
                 Description
@@ -50,74 +53,87 @@
             <span class="glyphicon glyphicon-arrow-right"></span>
             <code>positions</code> <code>face_indices</code>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
             <p>
                 The <code>.ply</code> file is deserialized into a set of <code>positions</code> and <code>face_indices</code>.
             </p>
         </div>
     </div>
+    <br>
     <div class="row">
         <div class="col-md-6 text-center">
             <code>positions</code> <code>face_indices</code>
             <span class="glyphicon glyphicon-arrow-right"></span>
             <code>positions</code> <code>normals</code>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
             <p>
                 We use <code>MeshEdit</code> to convert face indices into face normals, and then interpolate around a vertex to find vertex normals.
             </p>
         </div>
     </div>
+    <br>
     <div class="row">
         <div class="col-md-6 text-center">
             <code>positions</code> <code>normals</code>
             <span class="glyphicon glyphicon-arrow-right"></span>
             <code>.txt</code>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
             <p>
                 We serialize the <code>positions</code> and <code>normals</code> to a <code>.txt</code> file in order to access them later. This means we don't have to rely on <code>MeshEdit</code> inside of our BPA code because we already have computed the <code>normals</code>.
             </p>
         </div>
     </div>
+    <br>
     <div class="row">
         <div class="col-md-6 text-center">
             <code>.txt</code>
             <span class="glyphicon glyphicon-arrow-right"></span>
             <code>positions</code> <code>normals</code>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
             <p>
                 We deserialize the <code>.txt</code> file into a set of <code>positions</code> and <code>normals</code>
             </p>
         </div>
     </div>
+    <br>
     <div class="row">
         <div class="col-md-6 text-center">
             <code>positions</code> <code>normals</code>
             <span class="glyphicon glyphicon-arrow-right"></span>
             <code>positions</code> <code>face_indices</code>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
-            <p>
-                This is where the BPA algorithm goes. It is the hardest part of the process, and it gives us back the face data.
+            <p><b>
+                This is where the BPA algorithm goes.</b>
+                <br> It is the hardest part of the process, and it gives us back the face data.
             </p>
         </div>
     </div>
+    <br>
     <div class="row">
         <div class="col-md-6 text-center">
             <code>positions</code> <code>face_indices</code>
-        </div>
-        <div class="col-md-6 text-center">
             <span class="glyphicon glyphicon-arrow-right"></span>
             <code>.ply</code>
         </div>
+        <!--Left/Right-->
         <div class="col-md-6 text-center">
             <p>
                 Here, we serialize our <code>positions</code> and <code>face_indices</code> into a <code>.ply</code>, and we've basically come full circle. This makes it easy to compare our input <code>.ply</code> and our output <code>.ply</code>.
             </p>
         </div>
     </div>
+
+
+<!--
     <h2>Visually debugging vertex normals</h2>
     <p>
          We couldn't think of a way to test our code for creating vertex normals without viewing the normals, and our current rendering code would just display the point cloud like this:
@@ -164,9 +180,50 @@ vxm vym vzm nxm nym nzm</pre>
 -52.8133 67.0694 -57.5725 -0.844274 -0.203288 0.495858
 -52.4255 66.8347 -57.3804 -0.820147 -0.109775 0.561524</pre>
 
+-->
 
 
-<!-- ALLEN'S WRITTEN STUFF -->
+<!-- INTRODUCTION -->
+
+
+    <h2>Mesh Reconstruction</h2>
+    <p>
+        <a href="https://cs184team.github.io/cs184-final/">Project Proposal and Background Information</a>
+    </p>
+
+    <h2>Overview of the Ball-Pivoting Algorithm</h2>
+    <p>
+        The Ball-Pivoting Algorithm (BPA) is named for the simulated use of a virtual ball to help reconstruct a mesh from a point cloud.
+    </p>
+    <p>
+        To construct the mesh from the point cloud, one first assumes that the given point cloud consists of points sampled from the surface of an object. Points strictly represent a surface, therefore a mesh constructed from those points also represent a surface.
+    </p>
+    <p>
+        Using this assumption, image rolling a tiny ball across a "surface" of points. This tiny ball is dependent on the scale of the mesh, but it should be slightly larger than the average space between points. When you drop a ball onto the surface of points, the ball will get caught and settle upon three points. This is the <em>Seed Triangle</em>: the three points propping the ball up form a triangle, which becomes part of the mesh. From that location, the ball can roll in any direction. Roll the ball, pivoting along the triangle edge formed from two points. The ball then settles in a new location: a new triangle is formed from two of the previous vertices and one new point, the <em>Expansion Triangle</em> is added to the mesh. As we continue rolling and pivoting the ball, new triangles are formed and added to the mesh. The ball continues rolling and rolling until the mesh is fully formed.
+    </p>
+    <p>
+        This is the simple idea behind the Ball-Pivoting Algorithm, but of course there are many caveats to the thought process:
+    </p>
+
+    <ul>
+        <li>
+            <em>What if the sampled points are too far apart at some locations and the ball "falls through" the surface?</em> When the ball pivots along an edge, it may miss the appropriate point on the surface and instead hit another point on the object or even exactly its three old points. In this case, we check that the normal of the new triangle <code>Facet</code> is consistently oriented with the point's <code>Vertex</code> normals. If it is not, then we reject that triangle.
+        </li>
+        <li>
+            <em>What if the surface has a crease or valley, such that the distance between the surface and itself is less than the size of the ball?</em> In this case, the ball would just roll over the crease and ignore the points within the crease. But, this is not ideal behavior as the reconstructed mesh is not accurate to the object. To fix this, multiple ball radii must be used in BPA: the smaller balls are able to roll into the crease and construct that part of the surface; the larger balls would prevent the "fall throughs" noted in the above point and improve surface continuity.
+        </li>
+        <li>
+            <em>What if the surface is spaced into regions of points such that the ball cannot successfully roll between the regions?</em> The virtual ball is dropped onto the surface multiple times at varying locations. (Actually, our implementation has the ball drop onto all unprocessed sets of three points.) This ensures that the ball captures the entire mesh, even when the points are inconsistently spaced out.
+        </li>
+    </ul>
+
+
+
+
+
+
+
+<!-- DATA STRUCTURES -->
 
 
 
@@ -204,13 +261,32 @@ vxm vym vzm nxm nym nzm</pre>
     </p>
     <h4>Edge</h4>
     <p>
-        A <code>Facet</code> contains a 3D vector
+        An <code>Edge</code> contains pointers to its two <code>Vertex</code>s and two <code>Facet</code>s.
+    </p>
+    <p>
+        Additionally, it holds two flags of whether if (1) it is an inner edge, and if (2) it is on a boundary. An inner edge has already been processed and is part of the mesh. A boundary edge is on the border of the mesh: the surface is on one side of this edge and no further surface is on the other side of this edge. A boundary edge is essentially a "cliff" or "crack" in the mesh, when the physical object was improperly sampled or surface data is missing.
     </p>
     <h4>Facet</h4>
     <p>
-        A <code>Vertex</code> contains a 3D vector
+        A <code>Facet</code> is a triangle which contains pointers to its three <code>Vertex</code>s.
+    </p>
+    <p>
+        Upon creation, the three <code>Vertex</code>s are oriented such that the <code>Facet</code> surface normal is in the same direction as each <code>Vertex</code>'s normal. This ensures that the resulting mesh has consistently oriented triangles. Additionally upon creation, the <b>circumcenter</b> and <b>circumradius</b> of the <code>Facet</code> is calculated: these values are used in the virtual pivoting of the ball.
     </p>
 
+
+
+<!-- VISUAL DEBUGGER -->
+
+
+
+    <h2>Visual Debugger</h2>
+    <p>
+        <a href="http://www.staggeringbeauty.com/">YOUTUBE LINK TO VIDEO?</a>
+    </p>
+    <p>
+        In addition to implementing BPA, we created a visual debugger. It renders the creation of <em>Seed Triangles</em> and <em>Expansion Triangles</em> in real time.
+    </p>
 
 </div>
 </body>
