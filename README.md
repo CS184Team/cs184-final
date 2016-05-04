@@ -7,15 +7,15 @@ $ mkdir txt
 $ cd build
 $ cmake ..
 $ make
-$ curl -O http://graphics.stanford.edu/pub/3Dscanrep/happy/happy_recon.tar.gz
-$ tar -zxvf happy_recon.tar.gz
-$ rm happy_recon.tar.gz
-$ ./ply2txt happy_recon/happy_vrip.ply ../xyz/buddha.xyz
-rm -rf happy_recon
-./view ../txt/buddha.txt
+$ curl -O http://graphics.stanford.edu/pub/3Dscanrep/dragon/dragon_recon.tar.gz
+$ tar -zxvf dragon_recon.tar.gz
+$ rm dragon_recon.tar.gz
+$ ./ply2txt dragon_recon/dragon_vrip.ply ../txt/dragon.txt
+$ rm -rf dragon_recon
+$ ./view ../txt/dragon.txt
 ```
 
-Essentially, it downloads the buddha point cloud, converts it to a `.txt` file, and renders it.
+Essentially, it downloads the dragon point cloud, converts it to a `.txt` file, and renders it.
 
 You can also run the familiar
 ```
