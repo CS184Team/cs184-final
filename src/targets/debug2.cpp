@@ -151,60 +151,73 @@ int main(int argc, char **argv) {
 
     // OUR CODE BEGIN
 
-    vector<Facet *> *seedTriangles = new vector<Facet *>();
-    vector<Facet *> *expansionTriangles = new vector<Facet *>();
-    vector<Facet *> *fillHolesTriangles = new vector<Facet *>();
+    vector<vector<Facet *> > seedTriangles;
+    vector<vector<Facet *> > expansionTriangles;
+    vector<vector<Facet *> > fillHolesTriangles;
+    seedTriangles.push_back(vector<Facet *>());
+    expansionTriangles.push_back(vector<Facet *>());
+    fillHolesTriangles.push_back(vector<Facet *>());
 
-    auto renderOneFacet = [](Facet *facet) {
+    auto renderOneFacet = [&](Facet *facet) {
         glBegin(GL_TRIANGLES);
         for (int i = 0; i < 3; ++i) {
-            double x = facet->vertex((unsigned int) i)->x();
-            double y = facet->vertex((unsigned int) i)->y();
-            double z = facet->vertex((unsigned int) i)->z();
+            Vertex *vertex = facet->vertex((unsigned int) i);
+            double x = vertex->x();
+            double y = vertex->y();
+            double z = vertex->z();
+            double nx = vertex->nx();
+            double ny = vertex->ny();
+            double nz = vertex->nz();
+            glNormal3d(nx, ny, nz);
             glVertex3d(x, y, z);
         }
         glEnd();
     };
 
     auto initHook = []() {
-//        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
         return;
     };
 
-    float a = 0.5;
     float d = (float) (0.5 / radii.size());
-    function<void(void)> renderHook = [=, &a] {
-        glColor4f(0.0, a, 0.0, 1.0);
-        for (auto facet : *seedTriangles) {
-            renderOneFacet(facet);
-        }
-        glColor4f(a, a, 0.0, 1.0);
-        for (auto facet : *expansionTriangles) {
-            renderOneFacet(facet);
-        }
-        glColor4f(a, 0.0, 0.0, 1.0);
-        for (auto facet : *fillHolesTriangles) {
-            renderOneFacet(facet);
+
+    auto renderFacets = [&](vector<vector<Facet *> > &collection, double r, double g, double b) {
+        for (int i = 0; i < collection.size(); ++i) {
+            glColor3d(r, g, b);
+            for (int j = 0; j < collection[i].size(); ++j) {
+                renderOneFacet(collection[i][j]);
+            }
+            r += d;
+            g += d;
+            b += d;
         }
     };
 
-    auto seedTriangleCallback = [&mesher, seedTriangles](Facet *facet) {
-        seedTriangles->push_back(facet);
+    function<void(void)> renderHook = [&] {
+        renderFacets(seedTriangles, 0.0, 0.5, 0.0);
+        renderFacets(expansionTriangles, 0.5, 0.5, 0.0);
+        renderFacets(fillHolesTriangles, 0.5, 0.0, 0.0);
     };
 
-    auto expandTriangulationCallback = [&mesher, expansionTriangles](Facet *facet) {
-        expansionTriangles->push_back(facet);
+    auto seedTriangleCallback = [&](Facet *facet) {
+        seedTriangles.back().push_back(facet);
     };
 
-    auto fillHolesCallback = [&mesher, fillHolesTriangles](Facet *facet) {
-        fillHolesTriangles->push_back(facet);
+    auto expandTriangulationCallback = [&](Facet *facet) {
+        expansionTriangles.back().push_back(facet);
     };
 
-    auto nextRadiusCallback = [&a, d] {
-        a += d;
+    auto fillHolesCallback = [&](Facet *facet) {
+        fillHolesTriangles.back().push_back(facet);
     };
 
-    auto keyHook = [&mesher](char key) {
+    auto nextRadiusCallback = [&]() {
+        seedTriangles.push_back(vector<Facet *>());
+        expansionTriangles.push_back(vector<Facet *>());
+        fillHolesTriangles.push_back(vector<Facet *>());
+    };
+
+    auto keyHook = [&](char key) {
         mesher.stop = !mesher.stop;
     };
 
@@ -226,7 +239,7 @@ int main(int argc, char **argv) {
     viewer->set_renderer(renderer);
     viewer->init();
 
-    auto startFn = [&mesher, &radii, parallel_flag]() {
+    auto startFn = [&]() {
         if(parallel_flag == 1)
             mesher.parallelReconstruct(radii);
         else
