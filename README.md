@@ -25,7 +25,7 @@ $ ./meshedit ../dae/cow.dae
 To add more point cloud files , you will need to download them from [this webpage](http://graphics.stanford.edu/data/3Dscanrep/).
 The files need to be kept outside of source control because they are way too big (>100 MB).
 
-Once you have downloaded them, you can will need to run the two new executables, `ply2txt` and `xyzview`.
+Once you have downloaded them, you can will need to run the two new executables, `ply2txt` and `view`.
 
 ```
 $ ./ply2txt ../ply/<new>.ply ../txt/<new>.txt
