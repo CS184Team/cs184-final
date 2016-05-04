@@ -1,6 +1,6 @@
 ## Installation
 ```
-$ git clone https://github.com/MichaelSnowden/cs184-final
+$ git clone https://github.com/CS184Team/cs184-final
 $ cd cs184-final
 $ mkdir build
 $ mkdir txt
