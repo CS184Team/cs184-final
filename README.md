@@ -28,6 +28,6 @@ The files need to be kept outside of source control because they are way too big
 Once you have downloaded them, you can will need to run the two new executables, `ply2txt` and `xyzview`.
 
 ```
-$ ./ply2txt ../ply/dragon.ply ../txt/dragon.txt
-$ ./view ../txt/dragon.txt
+$ ./ply2txt ../ply/<new>.ply ../txt/<new>.txt
+$ ./view ../txt/<new>.txt
 ```
