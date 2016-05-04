@@ -15,14 +15,12 @@
 #include "camera.h"
 #include "light.h"
 
-using namespace std;
-
 namespace CGL {
 
-    class XYZRenderer : public Renderer {
+    class MyRenderer : public Renderer {
 
     public:
-        std::function<void(void)> *render_hook;
+        std::function<void(void)> renderHook;
 
         virtual void init(void);
 
@@ -36,9 +34,15 @@ namespace CGL {
 
         virtual void scroll_event(float offset_x, float offset_y);
 
+        virtual void key_event(char key);
+
+        std::function<void (char)> keyEventHook;
+        std::function<void (void)> initHook;
+
         void load(std::string fname);
 
-        void setBounds(const vector<Vector3D> &vertices);
+        void setBounds(const std::vector<Vector3D> &vertices);
+        void setBounds(const Vector3D &low, const Vector3D &mid, const Vector3D &high);
 
     private:
         std::vector<Vector3D> vertices;

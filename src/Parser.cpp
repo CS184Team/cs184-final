@@ -192,3 +192,46 @@ int Parser::parsePlyLines(char *iname, vector<Vector3D> &vertices, vector<pair<i
     faces = NULL;
     return 1;
 }
+
+int Parser::parsePlyFaces(char *iname, vector<Vector3D> &vertices, vector<Triangle> &facets) {
+    free(staticVertices);
+    free(faces);
+    vertIdx = 0;
+    faceIdx = 0;
+
+    p_ply ply = ply_open(iname, NULL, 0, NULL);
+    if (!ply) {
+        printf("[XYZ] Error: Could not open ifile (%s) for reading. Exiting\n", iname);
+        return 0;
+    }
+    if (!ply_read_header(ply)) {
+        printf("[XYZ] Error: Could not read ply header from ifile (%s). Exiting\n", iname);
+        return 0;
+    }
+
+    long nVertices = ply_set_read_cb(ply, "vertex", "x", vertex_cb, NULL, 0);
+    ply_set_read_cb(ply, "vertex", "y", vertex_cb, NULL, 0);
+    ply_set_read_cb(ply, "vertex", "z", vertex_cb, NULL, 1);
+    long nFaces = ply_set_read_cb(ply, "face", "vertex_indices", face_cb, NULL, 0);
+
+    staticVertices = (double *) malloc(sizeof(double) * nVertices * 3);
+    faces = (unsigned int *) malloc(sizeof(unsigned int) * nFaces * 3);
+    if (!ply_read(ply)) return 1;
+    ply_close(ply);
+
+    for (int i = 0; i < nVertices; ++i) {
+        double *vertex = staticVertices + i * 3;
+        vertices.push_back(Vector3D(vertex[0], vertex[1], vertex[2]));
+    }
+
+    for (int j = 0; j < nFaces; ++j) {
+        int i = j * 3;
+        facets.push_back((Triangle) {(int) faces[i], (int) faces[i+1], (int) faces[i+2]});
+    }
+
+    free(staticVertices);
+    free(faces);
+    staticVertices = NULL;
+    faces = NULL;
+    return 1;
+}

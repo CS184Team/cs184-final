@@ -12,10 +12,17 @@
 using namespace CGL;
 using namespace std;
 
+typedef struct {
+	int v1;
+	int v2;
+	int v3;
+} Triangle;
+
 class Parser {
 public:
     Parser();
     int parsePly(char *ifile, vector<Vector3D> &vertices, vector<Vector3D> &normals);
+    int parsePlyFaces(char *ifile, vector<Vector3D> &vertices, vector<Triangle> &triangles);
     int parsePlyLines(char *ifile, vector<Vector3D> &vertices, vector<pair<int, int> > &lines);
     int writeTxt(char *ofile, vector<Vector3D> &vertices, vector<Vector3D> &normals);
     int parseTxt(const char *ifile, vector<Vector3D> &vertices, vector<Vector3D> &normals);

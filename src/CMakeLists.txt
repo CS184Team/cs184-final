@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+add_definitions(-DUSE_CLANG)
+set(PC2M_PATH ../../pc2m2)
+set(BP_PATH ../../BallPivoting)
+
+#file(GLOB PC2M_SOURCES ${PC2M_PATH}/src/*.cpp ${BP_PATH}/src/*.cpp)
+#file(GLOB PC2M_HEADERS ${PC2M_PATH}/src/*.h ${BP_PATH}/src/*.h)
+
+file(GLOB PC2M_SOURCES ${BP_PATH}/src/*.cpp)
+file(GLOB PC2M_HEADERS ${BP_PATH}/src/*.h)
+
 include_directories(
         ${GLEW_INCLUDE_DIRS}
         ${GLFW_INCLUDE_DIRS}
@@ -16,9 +26,11 @@ link_directories(
         ${FREETYPE_LIBRARY_DIRS}
 )
 
+
 file(GLOB LIB_SOURCES *.cpp *.c)
 file(GLOB LIB_HEADERS *.h)
 add_library(MyLib ${LIB_SOURCES} ${LIB_HEADERS})
+add_library(PC2M ${PC2M_SOURCES} ${PC2M_HEADERS})
 
 file(GLOB APP_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/targets targets/*.c targets/*.cpp)
 foreach(target_file ${APP_SOURCES})
@@ -32,6 +44,7 @@ foreach(target_file ${APP_SOURCES})
     endif (APPLE)
     target_link_libraries(${target_name}
             MyLib
+            PC2M
             CGL ${CGL_LIBRARIES}
             glew ${GLEW_LIBRARIES}
             glfw ${GLFW_LIBRARIES}

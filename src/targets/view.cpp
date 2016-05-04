@@ -1,17 +1,17 @@
 #include "CGL/CGL.h"
-#include "../XYZRenderer.h"
+#include "../MyRenderer.h"
 
 using namespace std;
 using namespace CGL;
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        printf("Usage: \n\txyzview <file.xyz>\n");
+        printf("Usage: \n\txyzview <file.txt>\n");
         return 1;
     }
 
     Viewer viewer = Viewer();
-    XYZRenderer *xyzRenderer = new XYZRenderer();
+    MyRenderer *xyzRenderer = new MyRenderer();
     viewer.set_renderer(xyzRenderer);
     viewer.init();
     char *xyz_file = argv[1];
