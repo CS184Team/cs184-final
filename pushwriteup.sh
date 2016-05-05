@@ -1,4 +1,4 @@
-# pushes to "origin writeup"
+# pushes to "origin gh-pages"
 # you might need to modify that ^ on line 19
 if [[ $# -eq 0 ]] ; then
     echo 'Pass in a message for the commit!:'
@@ -16,5 +16,5 @@ set -e
 git add -u
 # git status
 git commit -m "$C"
-git push origin HEAD:writeup
+git push origin HEAD:gh-pages
 # git status
