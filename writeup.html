@@ -135,54 +135,6 @@
     </div>
 
 
-<!--
-    <h2>Visually debugging vertex normals</h2>
-    <p>
-         We couldn't think of a way to test our code for creating vertex normals without viewing the normals, and our current rendering code would just display the point cloud like this:
-    </p>
-    <img src="images/points.png" class="img-responsive center-block">
-    <p>
-        We decided to add some code to display the normals, but no matter what depth we viewed them at, it was difficult to tell whether or not they were oriented correctly.
-    </p>
-    <img src="images/white1.png" class="img-responsive center-block">
-    <img src="images/white2.png" class="img-responsive center-block">
-    <img src="images/white3.png" class="img-responsive center-block">
-    <p>
-        Finally, we had the idea of adjusting a few parameters to make visual vertex normal debugging possible.
-    </p>
-    <ul>
-        <li>Extend the length of the normal vector</li>
-        <li>Decrease the far-clip of the camera</li>
-        <li>Make the vertices red</li>
-        <li>Make the normal vectors blue</li>
-        <li>Make the end of the normal vectors green</li>
-    </ul>
-    <p>
-         Then, if we zoom in on the mesh, we should see green before we see red, which would tell us that the normals are indeed facing outwards.
-    </p>
-    <img src="images/1.png" class="img-responsive center-block">
-    <img src="images/2.png" class="img-responsive center-block">
-    <img src="images/3.png" class="img-responsive center-block">
-    <p>
-        Using this method, we were able to verify our code for calculating vertex normals and produce the <code>.txt</code> data we needed, which has this format:
-    </p>
-    <pre>vx1 vy1 vz1 nx1 ny1 nz1
-vx2 vy2 vz2 nx2 ny2 nz2
-.   .   .   .   .   .
-.   .   .   .   .   .
-.   .   .   .   .   .
-vxm vym vzm nxm nym nzm</pre>
-    <p>
-        Here is an example:
-    </p>
-    <pre>5.89458 11.7884 27.2832 -0.83141 -0.404449 0.381023
--53.3251 67.1044 -57.4501 -0.878005 -0.293709 0.377946
-3.75049 16.5054 29.454 -0.736516 -0.579169 0.349439
--40.0742 -33.2375 10.7422 -0.859218 -0.0742719 0.50619
--52.8133 67.0694 -57.5725 -0.844274 -0.203288 0.495858
--52.4255 66.8347 -57.3804 -0.820147 -0.109775 0.561524</pre>
-
--->
 
 
 <!-- INTRODUCTION --> <br>
@@ -249,7 +201,7 @@ vxm vym vzm nxm nym nzm</pre>
 
     <h2>Data Structure: VoxelArray</h2>
     <p>
-        The Ball-Pivoting Algorithm is run on a <code>.txt</code> file, which contains an unordered set of <code>positions</code> and <code>normals</code> for each respective point in the point cloud. In order for the BPA algorithm to work, we need a method to access all of the points within a given radius of any local point. To "roll" the ball we need quick access to all of the neighboring points to a local point. At most for the BPA, we need to obtain all points within $2\rho$ distance from the local point. To allow these queries for neighboring points, we created the <code>VoxelArray</code> data structure.
+        The Ball-Pivoting Algorithm is run on a <code>.txt</code> file, which contains an unordered set of <code>positions</code> and <code>normals</code> for each respective point in the point cloud. A point's <code>position</code> and <code>normal</code> is stored in the <code>Vertex</code> structure; and, the set of <code>Vertex</code>s are stored in the "<code>Cloud</code>." In order for the BPA algorithm to work, we need a method to access all of the points within a given radius of any local point. To "roll" the ball we need quick access to all of the neighboring points to a local point. At most for the BPA, we need to obtain all points within $2\rho$ distance from the local point. To allow these queries for neighboring points, we created the <code>VoxelArray</code> data structure.
     </p>
     <p>
         The <code>VoxelArray</code> is a 3D grid of cubic voxels, each voxel having side lengths of $2\rho$. With this voxel side length, we can successfully obtain all of the neighboring points: all points within $2\rho$ of the local point are contained within the local (center) voxel and it's 26 neighboring voxels. (Which constitutes a $3$x$3$x$3$ voxels, $6\rho$ length cube.) The points contained within the 27 local voxels can then be quickly filtered and sorted based on their distances from the local point.
@@ -313,12 +265,66 @@ vxm vym vzm nxm nym nzm</pre>
         In creating the render-debugger, we needed two threads to accomplish the asynchronous rendering and meshing. The main thread renders the model, and receives new triangles via three separate callbacks for <em>Seed Triangles</em>, <em>Expansion Triangles</em>, and <em>Hole-filling Triangles</em>. The meshing thread just runs the BPA meshing algorithm, and sends triangles to the main thread through callbacks given to the Mesher object from the main thread.
     </p>
 
+    <h3>Vertex Normal Debugger</h3>
+    <p>
+        In addition to the BPA visual debugger, we created a vertex normal debugger, for the <code>.ply</code><span class="glyphicon glyphicon-arrow-right"></span><code>.txt</code> conversion part of the <b>Project Pipeline</b>.
+    </p>
+    <p>
+         We couldn't think of a way to test our code for creating vertex normals without viewing the normals, and our initial rendering code would just display the point cloud like this:
+    </p>
+    <img src="images/points.png" class="img-responsive center-block">
+    <p>
+        We decided to add some code to display the normals, but no matter what depth we viewed them at, it was difficult to tell whether or not they were oriented correctly.
+    </p>
+    <img src="images/white1.png" class="img-responsive center-block">
+    <img src="images/white2.png" class="img-responsive center-block">
+    <img src="images/white3.png" class="img-responsive center-block">
+    <p>
+        Finally, we had the idea of adjusting a few parameters to make visual vertex normal debugging possible.
+    </p>
+    <ul>
+        <li>Extend the length of the normal vector</li>
+        <li>Decrease the far-clip of the camera</li>
+        <li>Make the vertices red</li>
+        <li>Make the normal vectors blue</li>
+        <li>Make the end of the normal vectors green</li>
+    </ul>
+    <p>
+         Then, if we zoom in on the mesh, we should see green before we see red, which would tell us that the normals are indeed facing outwards.
+    </p>
+    <img src="images/1.png" class="img-responsive center-block">
+    <img src="images/2.png" class="img-responsive center-block">
+    <img src="images/3.png" class="img-responsive center-block">
+    <p>
+        Using this method, we were able to verify our code for calculating vertex normals and produce the <code>.txt</code> data we needed, which has this format:
+    </p>
+    <pre>
+        vx1 vy1 vz1 nx1 ny1 nz1
+        vx2 vy2 vz2 nx2 ny2 nz2
+        .   .   .   .   .   .
+        .   .   .   .   .   .
+        .   .   .   .   .   .
+        vxm vym vzm nxm nym nzm
+    </pre>
+    <p>
+        Here is an example:
+    </p>
+    <pre>
+        5.89458 11.7884 27.2832 -0.83141 -0.404449 0.381023
+        -53.3251 67.1044 -57.4501 -0.878005 -0.293709 0.377946
+        3.75049 16.5054 29.454 -0.736516 -0.579169 0.349439
+        -40.0742 -33.2375 10.7422 -0.859218 -0.0742719 0.50619
+        -52.8133 67.0694 -57.5725 -0.844274 -0.203288 0.495858
+        -52.4255 66.8347 -57.3804 -0.820147 -0.109775 0.561524
+    </pre>
+    <br>          
+
 
 
 <!-- Algorithms --> <br>
 
 
-    <h2>The Ball-Pivoting Algorithm</h2>
+    <h1>The Ball-Pivoting Algorithm</h1>
     <p>
         The BPA takes in a oriented point <code>Cloud</code> of <code>Vertex</code>s. That is, each point has a position and a normal. Additionally, BPA requires a user-given radius or set of radii.
     </p>
@@ -355,6 +361,9 @@ vxm vym vzm nxm nym nzm</pre>
     </p>
 
     <h2>Algorithm: Find Candidate</h2>
+    <p>
+        Called by <b>Expand Triangulation</b>, given an <code>Edge</code> this function returns a valid <code>Vertex</code> upon which the ball can pivot onto. (Or returns <code>null</code>, indicating that there are no points available to pivot towards and the given <code>Edge</code> should be marked as boundary.) Essentially, this function simulates the rolling of the ball: the first point that the ball hits while pivoting is returned.
+    </p>
     <p>
 
     </p>
