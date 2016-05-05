@@ -192,6 +192,7 @@ vxm vym vzm nxm nym nzm</pre>
     <p>
         <a href="https://cs184team.github.io/cs184-final/">Project Proposal and Background Information</a><br>
         <a href="http://www.ipol.im/pub/art/2014/81/article.pdf"><font color="red">INCLUDE A LINK TO JULIE?</font><font color="green">CHECKME</font></a>
+        https://docs.google.com/a/berkeley.edu/presentation/d/10E21GqkAuSqA_eU7CxzZEUKP6ObKn_p21PGVOcP4FZU/edit?usp=sharing
     </p>
     <br>
 
@@ -296,10 +297,13 @@ vxm vym vzm nxm nym nzm</pre>
 
     <h2>Visual Debugger</h2>
     <p>
-        <a href="http://www.staggeringbeauty.com/">YOUTUBE LINK TO VIDEO?<font color="green">CHECKME</font></a>
+        In addition to implementing BPA, we created a visual debugger. It renders the creation of <em>Seed Triangles</em> and <em>Expansion Triangles</em> in real time.
     </p>
     <p>
-        In addition to implementing BPA, we created a visual debugger. It renders the creation of <em>Seed Triangles</em> and <em>Expansion Triangles</em> in real time.
+        <a href="https://youtu.be/CevV4jS45Bc">Video demo of BPA run on the Dragon point cloud.<font color="green">CHECKME</font></a> Multiple radii were used, this can be seen as the multiple passes of the BPA when holes in the mesh get filled in. During the demo, the camera zooms in at around <a href="https://youtu.be/CevV4jS45Bc?t=30s">0:30</a>: the <font color="#41A317">green</font> triangles are <em>Seed Triangles</em>, the <font color="#EAC117">yellow</font> triangles are <em>Expansion Triangles</em>, the <font color="#F70D1A">red</font> triangles are <em>Hole Filling Triangles</em>, which are discussed in the Hole Filling Algorithm below.
+    </p>
+    <p>
+        For the sake of the demo, smaller radii were used. A large input radius $\rho$ would cause the BPA to run extremely slowly under the visual debugger. This is because the <code>VoxelArray</code> creates Voxels of size $2\rho$, so larger $\rho$ values lead to a greater amount of neighboring points which must be processed while "rolling the ball."
     </p>
 
 
@@ -320,7 +324,11 @@ vxm vym vzm nxm nym nzm</pre>
 
     <h2>Algorithm: Find Seed Triangle</h2>
     <p>
-        <b>Find Seed Triangle</b> goes throughs
+        <b>Find Seed Triangle</b> iterates throughs the entire point cloud and attempts to find valid <em>Seed Triangles</em>. Iterating through the <code>Cloud</code>, this function searches for two other points in the neighborhood of the current point. The three points must be in <em>Empty Ball Configuration</em> in order to return a valid <code>Facet</code> for <b>Expand Triangulation</b>.
+    </p>
+    <h4>Empty Ball Configuration</h4>
+    <p>
+        <em>Empty Ball Configuration</em> signifies that a sphere of radius $\rho$ can be placed onto the three points with no other point contained within that sphere. The sphere is placed such that it is on the positive normal side of the <code>Facet</code> that would be formed by those three points. The intuitive reasoning behind the <em>Empty Ball Configuration</em> is that we want to drop the ball onto the surface of the object: if some other point is contained within the ball at any time, then the ball has essentially clipped through the physical surface of the object. We want the ball to be strictly on the surface, so that the created <code>Facet</code>s do in fact represent the surface of the object.
     </p>
 
     <h2>Algorithm: Expand Triangulation</h2>
@@ -335,9 +343,30 @@ vxm vym vzm nxm nym nzm</pre>
 
     <h2>Algorithm: Multiple Radii???</h2>
     <p>
-        
 
     </p>
+
+    <h2>Algorithm: Hole Filling???</h2>
+    <p>
+        
+    </p>
+
+
+
+<!-- Results/Conclusion --> <br>
+
+    <h2>Results</h2>
+    <p>
+        
+    </p>
+
+    <h2>Conclusions</h2>
+    <p>
+        
+    </p>
+
+
+
 
 </div>
 </body>
