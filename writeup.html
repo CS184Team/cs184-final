@@ -243,7 +243,7 @@
         A <code>Facet</code> is a triangle which contains pointers to its three <code>Vertex</code>s.
     </p>
     <p>
-        Upon creation, the three <code>Vertex</code>s are oriented such that the <code>Facet</code> surface normal is in the same direction as each <code>Vertex</code>'s normal. This ensures that the resulting mesh has consistently oriented triangles. Additionally upon creation, the <b>circumcenter</b> and <b>circumradius</b> of the <code>Facet</code> is calculated: these values are used in the virtual pivoting of the ball.
+        Upon creation, the three <code>Vertex</code>s are oriented such that the <code>Facet</code> surface normal is in the same direction as each <code>Vertex</code>'s normal. This ensures that the resulting mesh has consistently oriented triangles. Additionally upon creation, the <b>circumcenter</b> and <b>circumradius</b> of the <code>Facet</code> is calculated: these values are used in the virtual pivoting of the ball. The center of the $\rho$-circumsphere of the <code>Facet</code> on the positive normal side is also calculated.
     </p>
 
 
@@ -362,15 +362,26 @@
 
     <h2>Algorithm: Find Candidate</h2>
     <p>
-        Called by <b>Expand Triangulation</b>, given an <code>Edge</code> this function returns a valid <code>Vertex</code> upon which the ball can pivot onto. (Or returns <code>null</code>, indicating that there are no points available to pivot towards and the given <code>Edge</code> should be marked as boundary.) Essentially, this function simulates the rolling of the ball: the first point that the ball hits while pivoting is returned.
+        Called by <b>Expand Triangulation</b>, given an <code>Edge</code> this function returns a valid <code>Vertex</code> upon which the ball can pivot onto. (Or returns <code>null</code>, indicating that there are no points available to pivot towards and the given <code>Edge</code> should be marked as boundary.) <b>Essentially, this function simulates the rolling of the ball: the first point that the ball hits while pivoting is returned.</b>
     </p>
     <p>
-
+        To find a valid candidate <code>Vertex</code>, let the given <code>Edge</code> be $e$, let $c = (center\ of\ \rho$-$circumsphere\ of\ existing\ Facet\ adjacent\ to\ e)$ and let $m = (midpoint\ of\ e)$. We calculate $\rho' = ||m - c|| + \rho$. This $\rho'$ is the distance from $m$ to the center of the ball as the ball pivots around $e$, at all orientations of the ball. Then, we query the <code>VoxelArray</code> for all points within $2\rho'$ distance to $m$, sorted in order of increasing distance. The returned points are all of the points the ball can possibly hit while pivoting upon $e$. We then find a <code>Vertex</code> $v$ such that $v$:
+        <ul>
+            <li>$v$ is not an inner <code>Vertex</code> of the mesh, and is not either of $e$'s two <code>Vertex</code>s.</li>
+            <li>$v$ is <em>compatible</em> with $e$. That is, the <code>Facet</code> $f_{new}$ formed by $v$ and $e$ has a normal oriented in the same direction as the normals of $v$ and $e$'s <code>Vertex</code>s. (All three dot products are positive.)</li>
+            <li>the $f_{new}$ triangle has a circumcenter that exists: the square circumradius is less than $\rho$. Essentially, the ball fits onto the three new points and does not fall through.</li>
+            <li>$v$ and $e$ are in <em>Empty Ball Configuration</em>.</li>
+            <li>The angle between $e$'s old <code>Facet</code> and $f_{new}$ is minimized: the returned $v$ is the first point that the ball hits while pivoting.
+        </ul>
+        Iterating through all of the neighboring points, the $v$ meeting the above conditions is returned. Otherwise, <code>null</code> is returned.
     </p>
 
-    <h2>Algorithm: Multiple Radii???</h2>
+    <h2>Multiple Radii and Post-Processing</h2>
     <p>
-
+        The BPA is run multiple times with varying radii to improve the accuracy of the output mesh. We first run BPA with the smallest radii, which fills in the smallest creases of the mesh (as mentioned in section <b>Nuances</b>). Then BPA is run with increasing radii until all input radii have been processed. Each time, BPA is run on points not contained in an <code>Edge</code> AND the points that are contained within <em>boundary edges</em>. The latter is because the <code>Edge</code>s marked as being on a boundary cannot find a valid <em>Candidate Vertex</em> due to $\rho$ being too small on the previous BPA runs.
+    </p>
+    <p>
+        After finishing up with running the list of radii, a <em>Hole-Filling</em> post-processing step is run. For a variety of reasons (points too far apart, bad normal processing, etc.) a mesh may contain unintentional holes in its surface. Thus we check that if any three boundary <code>Edge</code>s form an oriented loop, they do in fact form a valid triangle. This triangle made from the boundary <code>Edge</code>s is a <em>Hole-Filling Triangle</em>.
     </p>
 
     
