@@ -397,8 +397,17 @@
 
     <h2>Conclusions</h2>
     <p>
-        
+        We had initially set out for implementing both BPA and the Poisson Reconstruction, though throughout the course of the workload we had shifted focus to implementing BPA and creating a way to visualize our BPA algorithm in real time. Our implementation is run faster on the command line with no visualizer.
     </p>
+    <p>
+        As we increase the input radius $\rho$, the running of BPA slows down proportionally. This is because the size of the Voxels inside the <code>VoxelArray</code> is dependent on $\rho$, specifically their side length is $2\rho$. Larger $\rho$ values lead to a greater amount of neighboring points which must be processed per local point while rolling the ball.
+    </p>
+    <p>
+        So to create as complete of a mesh as possible, we must use a wide range of input radii. Processing time to create a complete mesh is rather significant, especially if arbitrary input radii are used.
+    </p>
+    <p>
+        Efficient data structures are key for faster BPA processing and for visual debug rendering. And visual demos on smaller data sets are great for illustrating what is occuring step-by-step within the algorithm, helping with debugging.
+    </p>s
 
 
 
