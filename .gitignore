@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+*
+!index.html
+!favicon.ico
+!duck.jpg
+!.nojekyll
+!xyzview.png

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"></script>
+
+    <script type="text/javascript"
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
+    <script type="text/javascript"
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_CHTML">
+    </script>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
+
+    <title>Point Cloud to Mesh Project Proposal | CS 184</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <script>
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="page-header" id="Introduction">
+        <h1>Point Cloud to Mesh Project Proposal for CS184 <br>
+            <small> - Brett Rapponotti, Michael Snowden, and Allen Zeng</small>
+        </h1>
+        <h3>Title, Summary, and Team Members</h3>
+        <p>
+            The title of our project is <b>Point Cloud to Mesh</b>. The team members are Brett Rapponotti, Michael
+            Snowden, and Allen Zeng. Our project aims to convert point clouds into 3D
+            meshes. Specifically, given an input file of format <code>.plz</code> our program will output a 3D triangle
+            mesh in the format <code>.dae</code>.
+        </p>
+        <h3>Background</h3>
+        <p>
+            We will solve the problem of generating a 3D mesh that connects all the points from a given set of points (a
+            pointcloud).
+
+            <img src="duck.jpg" class="img-responsive center-block">
+
+            The purpose of a 3D scanner is to analyze a real-world object and collect data on the object’s shape and
+            appearance. The data collected by a 3D scanner is used to construct virtual models for various purposes,
+            including but not limited to industrial design, medical prosthetics, engineering prototyping, quality
+            control, entertainment production, and historic artifact documentation. These devices commonly scan the
+            surface of the object and output data in the form of point clouds. Then the point clouds must be processed
+            to created a 3D virtual mesh. The creation of the mesh is a challenging task. There are many ways to connect
+            the points within the point cloud to create a mesh: which method is the fastes? Which method is the most
+            accurate? How are the terms “fast” and “accurate” best defined for this task? We seek to answer these
+            questions in our project, and in doing so we hope to construct a point cloud processing method that rivals
+            the current standards.
+
+            Our main references for this project are <a
+                href="http://www.research.ibm.com/vistechnology/pdf/bpa_tvcg.pdf">this paper on the ball-pivoting
+            algorithm</a>
+            , and <a href="http://research.microsoft.com/en-us/um/people/hoppe/poissonrecon.pdf">this paper on Poisson
+            surface reconstruction</a>.
+        </p>
+        <h3>Resources</h3>
+        <p>
+            For our test files, we will be using <a href="http://graphics.stanford.edu/data/3Dscanrep/">the Stanford 3D
+            scanning repository</a>. The project will be implemented on
+            OS X. The project will be based on the code provided in CS 184’s Assignment 2. Specifically, we will be
+            using <code>MeshEdit</code> to parse our model files and visually display our meshes in order to check the
+            accuracy of
+            the reconstruction algorithm. We will be using the <code>HalfEdge</code> data structure to
+            implement our mesh
+            reconstruction algorithms. Our new code is written in c++ and compiled using gcc/g++. The models
+            used to test our mesh reconstruction algorithms are from the Stanford 3D scanning repository. We will also
+            be using <a href="http://w3.impa.br/~diego/software/rply/">RPly</a>, a small ANSI C library for parsing
+            <code>.ply</code> files. This library made it possible for us to create the <code>ply2xyz</code> converter
+            necessary in the first week for creating our point cloud rendering program. Without this program, we would
+            have to write our own parser for the <code>.ply</code> format, which is decades old and is encoded in
+            several different formats, including binary. By converting to <code>.xyz</code> format (a format which
+            Michael made up for this project), we were able to view our files in a format that was easier to parse.
+        </p>
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>dragon.ply</h4>
+                 <pre>ply
+format binary_big_endian 1.0
+element vertex 3609600
+property float x
+property float y
+property float z
+element face 7219045
+property list uchar int vertex_indices
+end_header
+Á£â‘ÁKf?Þ‹‹Á£$éÁKå?ß^íÁ£uSÁJ.?çåÝÁ¤IøÁI“é?å_ÌÁ¤C×ÁL‰g?ÕñÁ£§EÁMBD?Õ(ƒÁ¤¬æÁK?Ûd¦Á¢¦‘ÁJ‡~?é°Á£éÁM·H?ÔøVÁ¢m±ÁLJ]
+...</pre>
+                Above are the first few lines of an example <code>.ply</code> file. Notice how the vertex data is
+                encoded in a
+                non-ASCII format, making it hard to parse. In addition, there is an unnecessary header, and data about
+                vertex indices and faces.
+            </div>
+            <div class="col-sm-6">
+                <h4>dragon.xyz</h4>
+                <pre>3609600
+-20.4856 -12.7125 1.73863
+-20.393 -12.7436 1.74508
+-20.4323 -12.629 1.8117
+-20.5361 -12.5986 1.79199
+-20.5331 -12.7835 1.67143
+-20.4567 -12.8287 1.6653
+-20.5844 -12.6895 1.71401
+-20.3313 -12.6581 1.82079
+-20.3779 -12.8572 1.66383
+...</pre>
+                Above are the first few lines of the above file converted to <code>.xyz</code> format. Notice how the
+                first line tells us the number of vertices, and the lines below it just tell us the data for each
+                vertex.
+            </div>
+        </div>
+        <h3>Goals and deliverables</h3>
+        <h4>Plan to deliver</h4>
+        <ul>
+            <li>Implementation of <a href="http://www.research.ibm.com/vistechnology/pdf/bpa_tvcg.pdf">“The
+                Ball-Pivoting Algorithm for Surface Reconstruction”</a> algorithm to create a mesh
+                reconstruction from a point cloud, through the use of the <code>HalfEdge</code> data structure.
+                Essentially, this algorithm will give us a function which converts from <code>.xyz</code> to
+                <code>.dae</code>.
+            </li>
+            <li>
+                Performance comparison graphs between the two algorithms. Performance will
+                involve timing the system on certain 3D scanned files. For a file input, we want the algorithm to have
+                fast mesh creation but at the same time be accurate. A precise metric would be the number of <a
+                    href="https://en.wikipedia.org/wiki/FLOPS">FLOP</a>s required by each algorithm. However, we will
+                instead use a timer (for simplicity) between the start of the mesh creation and the end using different
+                implementations of
+                algorithms
+                (either the basic implementation or modified implementations of the basic one) to see which ones
+                obtain
+                the fastest runtime.
+                For accuracy, there are some rather advanced statistical calculations for judging mesh accuracy.
+                <a href="http://cs184.eecs.berkeley.edu/cs184_sp16/lecture/geometry-processing/slide_045">This slide</a>
+                gives a good basis for determining the “goodness” of a mesh rendering. If we check every mesh
+                triangle and determine if it holds for a certain threshold, say, 80% of triangles. We have a
+                list of triangles in our mesh and if we iterate through and find at least 80% pass, we can stop and
+                declare the mesh “good”.
+            </li>
+        </ul>
+        <h4>Hope to deliver</h4>
+        <ul>
+            <li>
+                Implementation of the more advanced “Poisson Surface Reconstruction” algorithm to create a mesh
+                reconstruction from a point cloud. After completing the performance analysis algorithm for the
+                ball-pivoting algorithm, we will
+                answer these questions:
+                <ul>
+                    <li>Is the BPA or
+                        Poisson better for constructing a mesh from a point cloud?
+                    </li>
+                    <li>
+                        Is there a tradeoff between speed and
+                        accuracy for the algorithms?
+                    </li>
+                </ul>
+                We will structure our answers as follows:
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Mesh</th>
+                        <th>Halt time for BPA</th>
+                        <th>Accuracy for BPA</th>
+                        <th>Halt time for PSR</th>
+                        <th>Accuracy for PSR</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>$t_{1,BPA}$</td>
+                        <td>$a_{1,BPA}$</td>
+                        <td>$t_{1,PSR}$</td>
+                        <td>$a_{1,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>$t_{2,BPA}$</td>
+                        <td>$a_{2,BPA}$</td>
+                        <td>$t_{2,PSR}$</td>
+                        <td>$a_{2,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>$t_{3,BPA}$</td>
+                        <td>$a_{3,BPA}$</td>
+                        <td>$t_{3,PSR}$</td>
+                        <td>$a_{3,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>$t_{4,BPA}$</td>
+                        <td>$a_{4,BPA}$</td>
+                        <td>$t_{4,PSR}$</td>
+                        <td>$a_{4,PSR}$</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>$t_{5,BPA}$</td>
+                        <td>$a_{5,BPA}$</td>
+                        <td>$t_{5,PSR}$</td>
+                        <td>$a_{5,PSR}$</td>
+                    </tr>
+                    </tbody>
+                </table>
+                Here, BPA stands for "Ball-Pivoting Algorithm", and PSR stands for "Poisson Surface Reconstruction".
+            </li>
+        </ul>
+        <h3>Schedule</h3>
+        <ul>
+            <li>
+                <b>First week</b> (week of 4/11)
+                <br>
+                Finish up proposal. Program to render point clouds. The program to render point clouds is now done, and
+                here is a rendering of the backside of the Buddha.
+                <img src="xyzview.png" class="img-responsive center-block">
+            </li>
+            <li>
+                <b>Second week</b> (week of 4/18)
+                <ul>
+                    <li>Implement basic BPA (working version, that may or may not be optimized for faster rendering)
+                    </li>
+                    <li>Tests for performance and accuracy for our algorithm</li>
+                </ul>
+            </li>
+            <li>
+                <b>Third week</b> (week of (4/25)
+                <br>
+                Implementing a basic Poisson Surface Reconstruction algorithm as based on the linked article, optimizing
+                the BPA algorithm and then running both to compare their efficiencies and speeds.
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
