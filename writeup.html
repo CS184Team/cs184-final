@@ -249,7 +249,7 @@ vxm vym vzm nxm nym nzm</pre>
 
     <h2>Data Structure: VoxelArray</h2>
     <p>
-        The Ball-Pivoting Algorithm is run on a <code>.txt</code> file, which contains an unordered set of <code>positions</code> and <code>normals</code> for each respective point in the point cloud. In order for the BPA algorithm to work, we need a method to access all of the points within a given radius of any local point. At most for the BPA, we need to obtain all points within $2\rho$ distance from the local point. To allow these queries for neighboring points, we created the <code>VoxelArray</code> data structure.
+        The Ball-Pivoting Algorithm is run on a <code>.txt</code> file, which contains an unordered set of <code>positions</code> and <code>normals</code> for each respective point in the point cloud. In order for the BPA algorithm to work, we need a method to access all of the points within a given radius of any local point. To "roll" the ball we need quick access to all of the neighboring points to a local point. At most for the BPA, we need to obtain all points within $2\rho$ distance from the local point. To allow these queries for neighboring points, we created the <code>VoxelArray</code> data structure.
     </p>
     <p>
         The <code>VoxelArray</code> is a 3D grid of cubic voxels, each voxel having side lengths of $2\rho$. With this voxel side length, we can successfully obtain all of the neighboring points: all points within $2\rho$ of the local point are contained within the local (center) voxel and it's 26 neighboring voxels. (Which constitutes a $3$x$3$x$3$ voxels, $6\rho$ length cube.) The points contained within the 27 local voxels can then be quickly filtered and sorted based on their distances from the local point.
@@ -349,6 +349,9 @@ vxm vym vzm nxm nym nzm</pre>
     <h3>Case: Hole-Filling Triangle</h3>
     <p>
         <em>Hole-Filling Triangles</em> are a special variant of <em>Expansion Triangles</em>. These are triangles that essentially fill in the hole as two <em>Edge Fronts</em> collide with each other or an <em>Edge Front</em> with itself. A <em>Hole-Filling Triangle</em> results from a ball pivoting upon a popped pivot <code>Edge</code>, and the two resulting <code>Edges</code> adjacent to the new <code>Facet</code> are both on an <em>Edge Front</em>. This means that all of the three <code>Edge</code>s adjacent to the <code>Facet</code> are marked as inner. The local region of the mesh is completely filled.
+    </p>
+    <p>
+        <em>Hole-Filling Triangles</em> also appear in a post-processing step. For a variety of reasons (points too far apart, bad normal processing, etc.) a mesh may contain unintentional holes in its surface. Thus we check that if any three boundary <code>Edge</code>s form an oriented loop, they do in fact form a valid triangle. This triangle made from boundary <code>Edge</code>s is also a <em>Hole-Filling Triangle</em>.
     </p>
 
     <h2>Algorithm: Find Candidate</h2>
