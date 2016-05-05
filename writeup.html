@@ -301,13 +301,16 @@ vxm vym vzm nxm nym nzm</pre>
 
     <h2>Visual Debugger</h2>
     <p>
-        In addition to implementing BPA, we created a visual debugger. It renders the creation of <em>Seed Triangles</em> and <em>Expansion Triangles</em> in real time.
+        In addition to implementing BPA, we created a visual debugger. It renders the creation of <em>Seed Triangles</em> and <em>Expansion Triangles</em> in real time. Additionally, the BPA function calls can be paused and stepped through triangle-by-triangle.
     </p>
     <p>
         <a href="https://youtu.be/CevV4jS45Bc">Video demo of BPA run on the Dragon point cloud.</a> Multiple radii were used, this can be seen as the multiple passes of the BPA when holes in the mesh get filled in. During the demo, the camera zooms in at around <a href="https://youtu.be/CevV4jS45Bc?t=30s">0:30</a>: the <font color="#41A317">green</font> triangles are <em>Seed Triangles</em>, the <font color="#EAC117">yellow</font> triangles are <em>Expansion Triangles</em>, the <font color="#F70D1A">red</font> triangles are <em>Hole Filling Triangles</em>, which are discussed in the Hole Filling Case below.
     </p>
     <p>
         For the sake of the demo, smaller radii were used. A large input radius $\rho$ would cause the BPA to run extremely slowly under the visual debugger. This is because the <code>VoxelArray</code> creates Voxels of size $2\rho$, so larger $\rho$ values lead to a greater amount of neighboring points which must be processed while "rolling the ball."
+    </p>
+    <p>
+        In creating the render-debugger, we needed two threads to accomplish the asynchronous rendering and meshing. The main thread renders the model, and receives new triangles via three separate callbacks for <em>Seed Triangles</em>, <em>Expansion Triangles</em>, and <em>Hole-filling Triangles</em>. The meshing thread just runs the BPA meshing algorithm, and sends triangles to the main thread through callbacks given to the Mesher object from the main thread.
     </p>
 
 
@@ -343,6 +346,11 @@ vxm vym vzm nxm nym nzm</pre>
         Throughout the entire loop, we must ensure that the <code>Edge</code>s being used are still valid and are available to be used. That is, we must make sure each <code>Edge</code> has at most two adjacent <code>Facet</code>s: if so then the <code>Edge</code> is marked as an inner edge, its job is finished and cannot be used anymore. If <b>Find Candidate</b> does not return a valid <code>Vertex</code> upon which the ball pivots onto, the <code>Edge</code> is marked as a boundary edge -- it only has one adjacent <code>Facet</code>, but its job is finished nonetheless. The ball in <b>Expand Triangulation</b> never pivots over any edge already tagged as inner or boundary, these edges are removed from the <em>Edge Front</em>.
     </p>
 
+    <h3>Case: Hole-Filling Triangle</h3>
+    <p>
+        <em>Hole-Filling Triangles</em> are a special variant of <em>Expansion Triangles</em>. These are triangles that essentially fill in the hole as two <em>Edge Fronts</em> collide with each other or an <em>Edge Front</em> with itself. A <em>Hole-Filling Triangle</em> results from a ball pivoting upon a popped pivot <code>Edge</code>, and the two resulting <code>Edges</code> adjacent to the new <code>Facet</code> are both on an <em>Edge Front</em>. This means that all of the three <code>Edge</code>s adjacent to the <code>Facet</code> are marked as inner. The local region of the mesh is completely filled.
+    </p>
+
     <h2>Algorithm: Find Candidate</h2>
     <p>
 
@@ -353,10 +361,7 @@ vxm vym vzm nxm nym nzm</pre>
 
     </p>
 
-    <h2>Case: Hole Filling Triangle</h2>
-    <p>
-        
-    </p>
+    
 
 
 
