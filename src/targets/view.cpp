@@ -6,7 +6,7 @@ using namespace CGL;
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        printf("Usage: \n\txyzview <file.txt>\n");
+        printf("Usage: \n\ttxtview <file.txt>\n");
         return 1;
     }
 

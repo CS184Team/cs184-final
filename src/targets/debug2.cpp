@@ -244,9 +244,6 @@ int main(int argc, char **argv) {
             mesher.parallelReconstruct(radii);
         else
             mesher.reconstruct(radii);
-        std::cout << "Filling holes" << std::endl;
-        mesher.fillHoles();
-        std::cout << "Done filling holes!" << std::endl;
     };
 
     std::thread pc2mThread(startFn);
@@ -279,10 +276,10 @@ int main(int argc, char **argv) {
     << " vertices; " << mesher.nFacets() << " facets. " << std::endl;
     std::cout << mesher.nBorderEdges() << " border edges" << std::endl;
 
-    if (!FileIO::saveMesh(outfile.c_str(), mesher)) {
-        std::cerr << "Pb saving the mesh; exiting." << std::endl;
-        return EXIT_FAILURE;
-    }
+//    if (!FileIO::saveMesh(outfile.c_str(), mesher)) {
+//        std::cerr << "Pb saving the mesh; exiting." << std::endl;
+//        return EXIT_FAILURE;
+//    }
 
     return EXIT_SUCCESS;
 }
