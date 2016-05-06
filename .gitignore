@@ -3,9 +3,11 @@
 ### Example user template
 
 # IntelliJ project files
+!*.png
 *
 !index.html
 !favicon.ico
 !duck.jpg
 !.nojekyll
 !xyzview.png
+!*.png
