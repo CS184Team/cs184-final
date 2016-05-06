@@ -107,11 +107,11 @@ namespace CGL {
     }
 
     std::string MyRenderer::name(void) {
-        return "XYZRenderer";
+        return "MyRenderer";
     }
 
     std::string MyRenderer::info(void) {
-        return "Renders .xyz files as point clouds";
+        return "";
     }
 
     inline float bound(float a, float low, float high) {
